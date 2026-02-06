@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>apexrl.optimizers package &#8212; ApexRL 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="apexrl-optimizers-package">
+<h1>apexrl.optimizers package<a class="headerlink" href="#apexrl-optimizers-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apexrl.optimizers.muon.html">apexrl.optimizers.muon module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="apexrl.optimizers.muon.html#id5">}</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apexrl.optimizers.muon.html#apexrl.optimizers.muon.Muon"><code class="docutils literal notranslate"><span class="pre">Muon</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="apexrl.optimizers.muon.html#apexrl.optimizers.muon.Muon.step"><code class="docutils literal notranslate"><span class="pre">Muon.step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="apexrl.optimizers.muon.html#apexrl.optimizers.muon.MuonWithAuxAdam"><code class="docutils literal notranslate"><span class="pre">MuonWithAuxAdam</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="apexrl.optimizers.muon.html#apexrl.optimizers.muon.MuonWithAuxAdam.step"><code class="docutils literal notranslate"><span class="pre">MuonWithAuxAdam.step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="apexrl.optimizers.muon.html#apexrl.optimizers.muon.SingleDeviceMuon"><code class="docutils literal notranslate"><span class="pre">SingleDeviceMuon</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="apexrl.optimizers.muon.html#apexrl.optimizers.muon.SingleDeviceMuon.step"><code class="docutils literal notranslate"><span class="pre">SingleDeviceMuon.step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="apexrl.optimizers.muon.html#apexrl.optimizers.muon.SingleDeviceMuonWithAuxAdam"><code class="docutils literal notranslate"><span class="pre">SingleDeviceMuonWithAuxAdam</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="apexrl.optimizers.muon.html#apexrl.optimizers.muon.SingleDeviceMuonWithAuxAdam.step"><code class="docutils literal notranslate"><span class="pre">SingleDeviceMuonWithAuxAdam.step()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="apexrl.optimizers.muon.html#apexrl.optimizers.muon.adam_update"><code class="docutils literal notranslate"><span class="pre">adam_update()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="apexrl.optimizers.muon.html#apexrl.optimizers.muon.muon_update"><code class="docutils literal notranslate"><span class="pre">muon_update()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="apexrl.optimizers.muon.html#apexrl.optimizers.muon.zeropower_via_newtonschulz5"><code class="docutils literal notranslate"><span class="pre">zeropower_via_newtonschulz5()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-apexrl.optimizers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-apexrl.optimizers" title="Link to this heading">¶</a></h2>
+<p>Custom optimizers for reinforcement learning.</p>
+<p>This module provides optimized implementations of various optimizers
+including Adam, AdamW, and Muon optimizers.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="apexrl.optimizers.Adam">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">apexrl.optimizers.</span></span><span class="sig-name descname"><span class="pre">Adam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">betas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.9,</span> <span class="pre">0.999)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amsgrad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">foreach</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capturable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fused</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoupled_weight_decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/adam.html#Adam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.Adam" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Optimizer</span></code></p>
+<p>Implements Adam algorithm.</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{split}\begin{aligned}
+     &amp;\rule{110mm}{0.4pt}                                                                 \\
+     &amp;\textbf{input}      : \gamma \text{ (lr)}, \beta_1, \beta_2
+         \text{ (betas)},\theta_0 \text{ (params)},f(\theta) \text{ (objective)}          \\
+     &amp;\hspace{13mm}      \lambda \text{ (weight decay)},  \: \textit{amsgrad},
+         \:\textit{maximize},  \: \epsilon \text{ (epsilon)}                              \\
+     &amp;\textbf{initialize} :  m_0 \leftarrow 0 \text{ ( first moment)},
+         v_0\leftarrow 0 \text{ (second moment)},\: v_0^{max}\leftarrow 0          \\[-1.ex]
+     &amp;\rule{110mm}{0.4pt}                                                                 \\
+     &amp;\textbf{for} \: t=1 \: \textbf{to} \: \ldots \: \textbf{do}                         \\\end{split}\\\begin{split}     &amp;\hspace{5mm}\textbf{if} \: \textit{maximize}:                                       \\
+     &amp;\hspace{10mm}g_t           \leftarrow   -\nabla_{\theta} f_t (\theta_{t-1})         \\
+     &amp;\hspace{5mm}\textbf{else}                                                           \\
+     &amp;\hspace{10mm}g_t           \leftarrow   \nabla_{\theta} f_t (\theta_{t-1})          \\
+     &amp;\hspace{5mm}\textbf{if} \: \lambda \neq 0                                           \\
+     &amp;\hspace{10mm} g_t \leftarrow g_t + \lambda  \theta_{t-1}                            \\
+     &amp;\hspace{5mm}m_t           \leftarrow   \beta_1 m_{t-1} + (1 - \beta_1) g_t          \\
+     &amp;\hspace{5mm}v_t           \leftarrow   \beta_2 v_{t-1} + (1-\beta_2) g^2_t          \\
+     &amp;\hspace{5mm}\widehat{m_t} \leftarrow   m_t/\big(1-\beta_1^t \big)                   \\
+     &amp;\hspace{5mm}\textbf{if} \: amsgrad                                                  \\
+     &amp;\hspace{10mm} v_t^{max} \leftarrow \mathrm{max}(v_{t-1}^{max},v_t)                  \\
+     &amp;\hspace{10mm}\widehat{v_t} \leftarrow v_t^{max}/\big(1-\beta_2^t \big)              \\
+     &amp;\hspace{5mm}\textbf{else}                                                           \\
+     &amp;\hspace{10mm}\widehat{v_t} \leftarrow   v_t/\big(1-\beta_2^t \big)                  \\
+     &amp;\hspace{5mm}\theta_t \leftarrow \theta_{t-1} - \gamma \widehat{m_t}/
+         \big(\sqrt{\widehat{v_t}} + \epsilon \big)                                       \\
+     &amp;\rule{110mm}{0.4pt}                                                          \\[-1.ex]
+     &amp;\bf{return} \:  \theta_t                                                     \\[-1.ex]
+     &amp;\rule{110mm}{0.4pt}                                                          \\[-1.ex]
+\end{aligned}\end{split}\end{aligned}\end{align} \]</div>
+<p>For further details regarding the algorithm we refer to <a class="reference external" href="https://arxiv.org/abs/1412.6980">Adam: A Method for Stochastic Optimization</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>iterable</em>) – iterable of parameters or named_parameters to optimize
+or iterable of dicts defining parameter groups. When using named_parameters,
+all parameters in all groups should be named</p></li>
+<li><p><strong>lr</strong> (<em>float</em><em>, </em><em>Tensor</em><em>, </em><em>optional</em>) – learning rate (default: 1e-3). A tensor LR
+is not yet supported for all our implementations. Please use a float
+LR if you are not also specifying fused=True or capturable=True.</p></li>
+<li><p><strong>betas</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – coefficients used for computing
+running averages of gradient and its square (default: (0.9, 0.999))</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – term added to the denominator to improve
+numerical stability (default: 1e-8)</p></li>
+<li><p><strong>weight_decay</strong> (<em>float</em><em>, </em><em>optional</em>) – weight decay (L2 penalty) (default: 0)</p></li>
+<li><p><strong>decoupled_weight_decay</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True, this optimizer is
+equivalent to AdamW and the algorithm will not accumulate weight
+decay in the momentum nor variance. (default: False)</p></li>
+<li><p><strong>amsgrad</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether to use the AMSGrad variant of this
+algorithm from the paper <a class="reference external" href="https://openreview.net/forum?id=ryQu7f-RZ">On the Convergence of Adam and Beyond</a>
+(default: False)</p></li>
+<li><p><strong>foreach</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether foreach implementation of optimizer
+is used. If unspecified by the user (so foreach is None), we will try to use
+foreach over the for-loop implementation on CUDA, since it is usually
+significantly more performant. Note that the foreach implementation uses
+~ sizeof(params) more peak memory than the for-loop version due to the intermediates
+being a tensorlist vs just one tensor. If memory is prohibitive, batch fewer
+parameters through the optimizer at a time or switch this flag to False (default: None)</p></li>
+<li><p><strong>maximize</strong> (<em>bool</em><em>, </em><em>optional</em>) – maximize the objective with respect to the
+params, instead of minimizing (default: False)</p></li>
+<li><p><strong>capturable</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether this instance is safe to
+capture in a graph, whether for CUDA graphs or for torch.compile support.
+Tensors are only capturable when on supported <span class="xref std std-ref">accelerators</span>.
+Passing True can impair ungraphed performance, so if you don’t intend to graph
+capture this instance, leave it False (default: False)</p></li>
+<li><p><strong>differentiable</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether autograd should
+occur through the optimizer step in training. Otherwise, the step()
+function runs in a torch.no_grad() context. Setting to True can impair
+performance, so leave it False if you don’t intend to run autograd
+through this instance (default: False)</p></li>
+<li><p><strong>fused</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether the fused implementation is used.
+Currently, <cite>torch.float64</cite>, <cite>torch.float32</cite>, <cite>torch.float16</cite>, and <cite>torch.bfloat16</cite>
+are supported. (default: None)</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The foreach and fused implementations are typically faster than the for-loop,
+single-tensor implementation, with fused being theoretically fastest with both
+vertical and horizontal fusion. As such, if the user has not specified either
+flag (i.e., when foreach = fused = None), we will attempt defaulting to the foreach
+implementation when the tensors are all on CUDA. Why not fused? Since the fused
+implementation is relatively new, we want to give it sufficient bake-in time.
+To specify fused, pass True for fused. To force running the for-loop
+implementation, pass False for either foreach or fused.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A prototype implementation of Adam and AdamW for MPS supports <cite>torch.float32</cite> and <cite>torch.float16</cite>.</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="apexrl.optimizers.Adam.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">closure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/adam.html#Adam.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.Adam.step" title="Link to this definition">¶</a></dt>
+<dd><p>Perform a single optimization step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>closure</strong> (<em>Callable</em><em>, </em><em>optional</em>) – A closure that reevaluates the model
+and returns the loss.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apexrl.optimizers.AdamW">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">apexrl.optimizers.</span></span><span class="sig-name descname"><span class="pre">AdamW</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">betas</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.9,</span> <span class="pre">0.999)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amsgrad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">foreach</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capturable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differentiable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fused</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/adamw.html#AdamW"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.AdamW" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#apexrl.optimizers.Adam" title="torch.optim.adam.Adam"><code class="xref py py-class docutils literal notranslate"><span class="pre">Adam</span></code></a></p>
+<p>Implements AdamW algorithm, where weight decay does not accumulate in the momentum nor variance.</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{split}\begin{aligned}
+     &amp;\rule{110mm}{0.4pt}                                                                 \\
+     &amp;\textbf{input}      : \gamma \text{(lr)}, \: \beta_1, \beta_2
+         \text{(betas)}, \: \theta_0 \text{(params)}, \: f(\theta) \text{(objective)},
+         \: \epsilon \text{ (epsilon)}                                                    \\
+     &amp;\hspace{13mm}      \lambda \text{(weight decay)},  \: \textit{amsgrad},
+         \: \textit{maximize}                                                             \\
+     &amp;\textbf{initialize} : m_0 \leftarrow 0 \text{ (first moment)}, v_0 \leftarrow 0
+         \text{ ( second moment)}, \: v_0^{max}\leftarrow 0                        \\[-1.ex]
+     &amp;\rule{110mm}{0.4pt}                                                                 \\
+     &amp;\textbf{for} \: t=1 \: \textbf{to} \: \ldots \: \textbf{do}                         \\\end{split}\\\begin{split}     &amp;\hspace{5mm}\textbf{if} \: \textit{maximize}:                                       \\
+     &amp;\hspace{10mm}g_t           \leftarrow   -\nabla_{\theta} f_t (\theta_{t-1})         \\
+     &amp;\hspace{5mm}\textbf{else}                                                           \\
+     &amp;\hspace{10mm}g_t           \leftarrow   \nabla_{\theta} f_t (\theta_{t-1})          \\
+     &amp;\hspace{5mm} \theta_t \leftarrow \theta_{t-1} - \gamma \lambda \theta_{t-1}         \\
+     &amp;\hspace{5mm}m_t           \leftarrow   \beta_1 m_{t-1} + (1 - \beta_1) g_t          \\
+     &amp;\hspace{5mm}v_t           \leftarrow   \beta_2 v_{t-1} + (1-\beta_2) g^2_t          \\
+     &amp;\hspace{5mm}\widehat{m_t} \leftarrow   m_t/\big(1-\beta_1^t \big)                   \\
+     &amp;\hspace{5mm}\textbf{if} \: amsgrad                                                  \\
+     &amp;\hspace{10mm} v_t^{max} \leftarrow \mathrm{max}(v_{t-1}^{max},v_t)                  \\
+     &amp;\hspace{10mm}\widehat{v_t} \leftarrow v_t^{max}/\big(1-\beta_2^t \big)              \\
+     &amp;\hspace{5mm}\textbf{else}                                                           \\
+     &amp;\hspace{10mm}\widehat{v_t} \leftarrow   v_t/\big(1-\beta_2^t \big)                  \\
+     &amp;\hspace{5mm}\theta_t \leftarrow \theta_t - \gamma \widehat{m_t}/
+         \big(\sqrt{\widehat{v_t}} + \epsilon \big)                                       \\
+     &amp;\rule{110mm}{0.4pt}                                                          \\[-1.ex]
+     &amp;\bf{return} \:  \theta_t                                                     \\[-1.ex]
+     &amp;\rule{110mm}{0.4pt}                                                          \\[-1.ex]
+\end{aligned}\end{split}\end{aligned}\end{align} \]</div>
+<p>For further details regarding the algorithm we refer to <a class="reference external" href="https://arxiv.org/abs/1711.05101">Decoupled Weight Decay Regularization</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>iterable</em>) – iterable of parameters or named_parameters to optimize
+or iterable of dicts defining parameter groups. When using named_parameters,
+all parameters in all groups should be named</p></li>
+<li><p><strong>lr</strong> (<em>float</em><em>, </em><em>Tensor</em><em>, </em><em>optional</em>) – learning rate (default: 1e-3). A tensor LR
+is not yet supported for all our implementations. Please use a float
+LR if you are not also specifying fused=True or capturable=True.</p></li>
+<li><p><strong>betas</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – coefficients used for computing
+running averages of gradient and its square (default: (0.9, 0.999))</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – term added to the denominator to improve
+numerical stability (default: 1e-8)</p></li>
+<li><p><strong>weight_decay</strong> (<em>float</em><em>, </em><em>optional</em>) – weight decay coefficient (default: 1e-2)</p></li>
+<li><p><strong>amsgrad</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether to use the AMSGrad variant of this
+algorithm from the paper <a class="reference external" href="https://openreview.net/forum?id=ryQu7f-RZ">On the Convergence of Adam and Beyond</a>
+(default: False)</p></li>
+<li><p><strong>maximize</strong> (<em>bool</em><em>, </em><em>optional</em>) – maximize the objective with respect to the
+params, instead of minimizing (default: False)</p></li>
+<li><p><strong>foreach</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether foreach implementation of optimizer
+is used. If unspecified by the user (so foreach is None), we will try to use
+foreach over the for-loop implementation on CUDA, since it is usually
+significantly more performant. Note that the foreach implementation uses
+~ sizeof(params) more peak memory than the for-loop version due to the intermediates
+being a tensorlist vs just one tensor. If memory is prohibitive, batch fewer
+parameters through the optimizer at a time or switch this flag to False (default: None)</p></li>
+<li><p><strong>capturable</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether this instance is safe to
+capture in a graph, whether for CUDA graphs or for torch.compile support.
+Tensors are only capturable when on supported <span class="xref std std-ref">accelerators</span>.
+Passing True can impair ungraphed performance, so if you don’t intend to graph
+capture this instance, leave it False (default: False)</p></li>
+<li><p><strong>differentiable</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether autograd should
+occur through the optimizer step in training. Otherwise, the step()
+function runs in a torch.no_grad() context. Setting to True can impair
+performance, so leave it False if you don’t intend to run autograd
+through this instance (default: False)</p></li>
+<li><p><strong>fused</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether the fused implementation is used.
+Currently, <cite>torch.float64</cite>, <cite>torch.float32</cite>, <cite>torch.float16</cite>, and <cite>torch.bfloat16</cite>
+are supported. (default: None)</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The foreach and fused implementations are typically faster than the for-loop,
+single-tensor implementation, with fused being theoretically fastest with both
+vertical and horizontal fusion. As such, if the user has not specified either
+flag (i.e., when foreach = fused = None), we will attempt defaulting to the foreach
+implementation when the tensors are all on CUDA. Why not fused? Since the fused
+implementation is relatively new, we want to give it sufficient bake-in time.
+To specify fused, pass True for fused. To force running the for-loop
+implementation, pass False for either foreach or fused.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A prototype implementation of Adam and AdamW for MPS supports <cite>torch.float32</cite> and <cite>torch.float16</cite>.</p>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apexrl.optimizers.Muon">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">apexrl.optimizers.</span></span><span class="sig-name descname"><span class="pre">Muon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">momentum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/optimizers/muon.html#Muon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.Muon" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Optimizer</span></code></p>
+<p>Muon - MomentUm Orthogonalized by Newton-schulz</p>
+<p><a class="reference external" href="https://kellerjordan.github.io/posts/muon/">https://kellerjordan.github.io/posts/muon/</a></p>
+<p>Muon internally runs standard SGD-momentum, and then performs an orthogonalization post-
+processing step, in which each 2D parameter’s update is replaced with the nearest orthogonal
+matrix. For efficient orthogonalization we use a Newton-Schulz iteration, which has the
+advantage that it can be stably run in bfloat16 on the GPU.</p>
+<p>Muon should only be used for hidden weight layers. The input embedding, final output layer,
+and any internal gains or biases should be optimized using a standard method such as AdamW.
+Hidden convolutional weights can be trained using Muon by viewing them as 2D and then
+collapsing their last 3 dimensions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lr</strong> – The learning rate, in units of spectral norm per update.</p></li>
+<li><p><strong>weight_decay</strong> – The AdamW-style weight decay.</p></li>
+<li><p><strong>momentum</strong> – The momentum. A value of 0.95 here is usually fine.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="apexrl.optimizers.Muon.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">closure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/optimizers/muon.html#Muon.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.Muon.step" title="Link to this definition">¶</a></dt>
+<dd><p>Perform a single optimization step to update parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>closure</strong> (<em>Callable</em>) – A closure that reevaluates the model and
+returns the loss. Optional for most optimizers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">ApexRL</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Atticlmr.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.0.4</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/API/apexrl.optimizers.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

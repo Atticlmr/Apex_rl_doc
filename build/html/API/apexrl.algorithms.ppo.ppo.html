@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>apexrl.algorithms.ppo.ppo module &#8212; ApexRL 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-apexrl.algorithms.ppo.ppo">
+<span id="apexrl-algorithms-ppo-ppo-module"></span><h1>apexrl.algorithms.ppo.ppo module<a class="headerlink" href="#module-apexrl.algorithms.ppo.ppo" title="Link to this heading">¶</a></h1>
+<p>PPO (Proximal Policy Optimization) algorithm implementation.</p>
+<p>Supports custom Actor and Critic networks defined by users.</p>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>Original paper: <a class="reference external" href="https://arxiv.org/abs/1707.06347">https://arxiv.org/abs/1707.06347</a></p></li>
+<li><p>rsl_rl: <a class="reference external" href="https://github.com/leggedrobotics/rsl_rl">https://github.com/leggedrobotics/rsl_rl</a></p></li>
+<li><p>stable-baselines3: <a class="reference external" href="https://github.com/DLR-RM/stable-baselines3">https://github.com/DLR-RM/stable-baselines3</a></p></li>
+</ul>
+<dl class="py class">
+<dt class="sig sig-object py" id="apexrl.algorithms.ppo.ppo.PPO">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">apexrl.algorithms.ppo.ppo.</span></span><span class="sig-name descname"><span class="pre">PPO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actor_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">critic_class</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actor_cfg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">critic_cfg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">critic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/algorithms/ppo/ppo.html#PPO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.algorithms.ppo.ppo.PPO" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>PPO algorithm for vectorized environments with custom networks.</p>
+<p>Users provide custom Actor and Critic classes, and PPO handles the
+training loop, advantage computation, and optimization.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">apexrl.algorithms.ppo</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPO</span><span class="p">,</span> <span class="n">PPOConfig</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">apexrl.envs.vecenv</span><span class="w"> </span><span class="kn">import</span> <span class="n">DummyVecEnv</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">apexrl.models.mlp</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLPActor</span><span class="p">,</span> <span class="n">MLPCritic</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">spaces</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create environment</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">DummyVecEnv</span><span class="p">(</span><span class="n">num_envs</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span> <span class="n">num_obs</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span> <span class="n">num_actions</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Define observation and action spaces</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="n">high</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">48</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">action_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Configure PPO</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span> <span class="o">=</span> <span class="n">PPOConfig</span><span class="p">(</span><span class="n">num_steps</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">3e-4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create agent with custom networks</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">agent</span> <span class="o">=</span> <span class="n">PPO</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">actor_class</span><span class="o">=</span><span class="n">MLPActor</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">critic_class</span><span class="o">=</span><span class="n">MLPCritic</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">obs_space</span><span class="o">=</span><span class="n">obs_space</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">action_space</span><span class="o">=</span><span class="n">action_space</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">actor_cfg</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;hidden_dims&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">]},</span>
+<span class="gp">... </span>    <span class="n">critic_cfg</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;hidden_dims&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">]},</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Train</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">agent</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">total_timesteps</span><span class="o">=</span><span class="mi">10_000_000</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<a class="reference internal" href="apexrl.envs.html#apexrl.envs.VecEnv" title="apexrl.envs.VecEnv"><em>VecEnv</em></a>)</p></li>
+<li><p><strong>cfg</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="apexrl.algorithms.html#apexrl.algorithms.PPOConfig" title="apexrl.algorithms.PPOConfig"><em>PPOConfig</em></a><em>]</em>)</p></li>
+<li><p><strong>actor_class</strong> (<em>Optional</em><em>[</em><em>Type</em><em>[</em><a class="reference internal" href="apexrl.models.html#apexrl.models.Actor" title="apexrl.models.Actor"><em>Actor</em></a><em>]</em><em>]</em>)</p></li>
+<li><p><strong>critic_class</strong> (<em>Optional</em><em>[</em><em>Type</em><em>[</em><a class="reference internal" href="apexrl.models.html#apexrl.models.Critic" title="apexrl.models.Critic"><em>Critic</em></a><em>]</em><em>]</em>)</p></li>
+<li><p><strong>obs_space</strong> (<em>Optional</em><em>[</em><em>spaces.Space</em><em>]</em>)</p></li>
+<li><p><strong>action_space</strong> (<em>Optional</em><em>[</em><em>spaces.Space</em><em>]</em>)</p></li>
+<li><p><strong>actor_cfg</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>critic_cfg</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>]</em>)</p></li>
+<li><p><strong>actor</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="apexrl.models.html#apexrl.models.Actor" title="apexrl.models.Actor"><em>Actor</em></a><em>]</em>)</p></li>
+<li><p><strong>critic</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="apexrl.models.html#apexrl.models.Critic" title="apexrl.models.Critic"><em>Critic</em></a><em>]</em>)</p></li>
+<li><p><strong>log_dir</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>device</strong> (<em>Optional</em><em>[</em><em>torch.device</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="apexrl.algorithms.ppo.ppo.PPO.adjust_learning_rate">
+<span class="sig-name descname"><span class="pre">adjust_learning_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_iteration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_iterations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/algorithms/ppo/ppo.html#PPO.adjust_learning_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.algorithms.ppo.ppo.PPO.adjust_learning_rate" title="Link to this definition">¶</a></dt>
+<dd><p>Adjust learning rate based on schedule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>current_iteration</strong> (<em>int</em>)</p></li>
+<li><p><strong>total_iterations</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apexrl.algorithms.ppo.ppo.PPO.collect_rollout">
+<span class="sig-name descname"><span class="pre">collect_rollout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extras_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/algorithms/ppo/ppo.html#PPO.collect_rollout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.algorithms.ppo.ppo.PPO.collect_rollout" title="Link to this definition">¶</a></dt>
+<dd><p>Collect a rollout from the environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>extras_callback</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]]</span>) – Optional callback function called after each step with
+(extras, dones, true_dones, episode_rewards) to process environment
+extras such as reward components and custom metrics.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary of rollout statistics.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apexrl.algorithms.ppo.ppo.PPO.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_episodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/algorithms/ppo/ppo.html#PPO.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.algorithms.ppo.ppo.PPO.eval" title="Link to this definition">¶</a></dt>
+<dd><p>Evaluate the agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>num_episodes</strong> (<em>int</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apexrl.algorithms.ppo.ppo.PPO.get_current_lr">
+<span class="sig-name descname"><span class="pre">get_current_lr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/algorithms/ppo/ppo.html#PPO.get_current_lr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.algorithms.ppo.ppo.PPO.get_current_lr" title="Link to this definition">¶</a></dt>
+<dd><p>Get current learning rate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apexrl.algorithms.ppo.ppo.PPO.learn">
+<span class="sig-name descname"><span class="pre">learn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">total_timesteps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/algorithms/ppo/ppo.html#PPO.learn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.algorithms.ppo.ppo.PPO.learn" title="Link to this definition">¶</a></dt>
+<dd><p>Train the agent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>total_timesteps</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – Total number of timesteps to train for.
+Ignored if max_iterations is set in config.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apexrl.algorithms.ppo.ppo.PPO.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/algorithms/ppo/ppo.html#PPO.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.algorithms.ppo.ppo.PPO.load" title="Link to this definition">¶</a></dt>
+<dd><p>Load model checkpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>path</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apexrl.algorithms.ppo.ppo.PPO.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/algorithms/ppo/ppo.html#PPO.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.algorithms.ppo.ppo.PPO.save" title="Link to this definition">¶</a></dt>
+<dd><p>Save model checkpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>path</strong> (<em>str</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apexrl.algorithms.ppo.ppo.PPO.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/algorithms/ppo/ppo.html#PPO.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.algorithms.ppo.ppo.PPO.update" title="Link to this definition">¶</a></dt>
+<dd><p>Update policy and value function using collected rollout data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of training statistics.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">ApexRL</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Atticlmr.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.0.4</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/API/apexrl.algorithms.ppo.ppo.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

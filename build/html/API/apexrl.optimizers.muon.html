@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>apexrl.optimizers.muon module &#8212; ApexRL 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-apexrl.optimizers.muon">
+<span id="apexrl-optimizers-muon-module"></span><h1>apexrl.optimizers.muon module<a class="headerlink" href="#module-apexrl.optimizers.muon" title="Link to this heading">¶</a></h1>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>bibtex
+&#64;misc{jordan2024muon,</p>
+<blockquote>
+<div><dl class="simple">
+<dt>author       = {Keller Jordan and Yuchen Jin and Vlado Boza and You Jiacheng and</dt><dd><p>Franz Cesista and Laker Newhouse and Jeremy Bernstein},</p>
+</dd>
+</dl>
+<p>title        = {Muon: An optimizer for hidden layers in neural networks},
+year         = {2024},
+url          = {<a class="reference external" href="https://kellerjordan.github.io/posts/muon/">https://kellerjordan.github.io/posts/muon/</a>}</p>
+</div></blockquote>
+<section id="id5">
+<h2>}<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>name=’muon-optimizer’,</dt><dd><p>version=’0.1.0’,
+author=’Keller Jordan’,
+<a class="reference external" href="mailto:author_email='kjordan4077&#37;&#52;&#48;gmail&#46;com">author_email=’kjordan4077<span>&#64;</span>gmail<span>&#46;</span>com</a>’,
+description=’Muon opimizer’,
+url=’<a class="reference external" href="https://github.com/KellerJordan/Muon">https://github.com/KellerJordan/Muon</a>’,</p>
+</dd>
+</dl>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="apexrl.optimizers.muon.Muon">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">apexrl.optimizers.muon.</span></span><span class="sig-name descname"><span class="pre">Muon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">momentum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/optimizers/muon.html#Muon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.muon.Muon" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Optimizer</span></code></p>
+<p>Muon - MomentUm Orthogonalized by Newton-schulz</p>
+<p><a class="reference external" href="https://kellerjordan.github.io/posts/muon/">https://kellerjordan.github.io/posts/muon/</a></p>
+<p>Muon internally runs standard SGD-momentum, and then performs an orthogonalization post-
+processing step, in which each 2D parameter’s update is replaced with the nearest orthogonal
+matrix. For efficient orthogonalization we use a Newton-Schulz iteration, which has the
+advantage that it can be stably run in bfloat16 on the GPU.</p>
+<p>Muon should only be used for hidden weight layers. The input embedding, final output layer,
+and any internal gains or biases should be optimized using a standard method such as AdamW.
+Hidden convolutional weights can be trained using Muon by viewing them as 2D and then
+collapsing their last 3 dimensions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lr</strong> – The learning rate, in units of spectral norm per update.</p></li>
+<li><p><strong>weight_decay</strong> – The AdamW-style weight decay.</p></li>
+<li><p><strong>momentum</strong> – The momentum. A value of 0.95 here is usually fine.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="apexrl.optimizers.muon.Muon.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">closure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/optimizers/muon.html#Muon.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.muon.Muon.step" title="Link to this definition">¶</a></dt>
+<dd><p>Perform a single optimization step to update parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>closure</strong> (<em>Callable</em>) – A closure that reevaluates the model and
+returns the loss. Optional for most optimizers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apexrl.optimizers.muon.MuonWithAuxAdam">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">apexrl.optimizers.muon.</span></span><span class="sig-name descname"><span class="pre">MuonWithAuxAdam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_groups</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/optimizers/muon.html#MuonWithAuxAdam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.muon.MuonWithAuxAdam" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Optimizer</span></code></p>
+<p>Distributed Muon variant that can be used for all parameters in the network, since it runs an
+internal AdamW for the parameters that are not compatible with Muon. The user must manually
+specify which parameters shall be optimized with Muon and which with Adam by passing in a
+list of param_groups with the <cite>use_muon</cite> flag set.</p>
+<p>The point of this class is to allow the user to have a single optimizer in their code, rather
+than having both a Muon and an Adam which each need to be stepped.</p>
+<p>You can see an example usage below:</p>
+<p><a class="reference external" href="https://github.com/KellerJordan/modded-nanogpt/blob/master/records/052525_MuonWithAuxAdamExample/b01550f9-03d8-4a9c-86fe-4ab434f1c5e0.txt#L470">https://github.com/KellerJordan/modded-nanogpt/blob/master/records/052525_MuonWithAuxAdamExample/b01550f9-03d8-4a9c-86fe-4ab434f1c5e0.txt#L470</a>
+<a href="#id6"><span class="problematic" id="id7">``</span></a>`
+hidden_matrix_params = [p for n, p in model.blocks.named_parameters() if p.ndim &gt;= 2 and “embed” not in n]
+embed_params = [p for n, p in model.named_parameters() if “embed” in n]
+scalar_params = [p for p in model.parameters() if p.ndim &lt; 2]
+head_params = [model.lm_head.weight]</p>
+<p>from muon import MuonWithAuxAdam
+adam_groups = [dict(params=head_params, lr=0.22), dict(params=embed_params, lr=0.6), dict(params=scalar_params, lr=0.04)]
+adam_groups = [dict(<a href="#id8"><span class="problematic" id="id9">**</span></a>g, betas=(0.8, 0.95), eps=1e-10, use_muon=False) for g in adam_groups]
+muon_group = dict(params=hidden_matrix_params, lr=0.05, momentum=0.95, use_muon=True)
+param_groups = [<a href="#id10"><span class="problematic" id="id11">*</span></a>adam_groups, muon_group]
+optimizer = MuonWithAuxAdam(param_groups)
+<a href="#id12"><span class="problematic" id="id13">``</span></a><a href="#id14"><span class="problematic" id="id15">`</span></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apexrl.optimizers.muon.MuonWithAuxAdam.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">closure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/optimizers/muon.html#MuonWithAuxAdam.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.muon.MuonWithAuxAdam.step" title="Link to this definition">¶</a></dt>
+<dd><p>Perform a single optimization step to update parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>closure</strong> (<em>Callable</em>) – A closure that reevaluates the model and
+returns the loss. Optional for most optimizers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apexrl.optimizers.muon.SingleDeviceMuon">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">apexrl.optimizers.muon.</span></span><span class="sig-name descname"><span class="pre">SingleDeviceMuon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">momentum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/optimizers/muon.html#SingleDeviceMuon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.muon.SingleDeviceMuon" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Optimizer</span></code></p>
+<p>Muon variant for usage in non-distributed settings.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apexrl.optimizers.muon.SingleDeviceMuon.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">closure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/optimizers/muon.html#SingleDeviceMuon.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.muon.SingleDeviceMuon.step" title="Link to this definition">¶</a></dt>
+<dd><p>Perform a single optimization step to update parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>closure</strong> (<em>Callable</em>) – A closure that reevaluates the model and
+returns the loss. Optional for most optimizers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apexrl.optimizers.muon.SingleDeviceMuonWithAuxAdam">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">apexrl.optimizers.muon.</span></span><span class="sig-name descname"><span class="pre">SingleDeviceMuonWithAuxAdam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_groups</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/optimizers/muon.html#SingleDeviceMuonWithAuxAdam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.muon.SingleDeviceMuonWithAuxAdam" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Optimizer</span></code></p>
+<p>Non-distributed variant of MuonWithAuxAdam.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apexrl.optimizers.muon.SingleDeviceMuonWithAuxAdam.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">closure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/optimizers/muon.html#SingleDeviceMuonWithAuxAdam.step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.muon.SingleDeviceMuonWithAuxAdam.step" title="Link to this definition">¶</a></dt>
+<dd><p>Perform a single optimization step to update parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>closure</strong> (<em>Callable</em>) – A closure that reevaluates the model and
+returns the loss. Optional for most optimizers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apexrl.optimizers.muon.adam_update">
+<span class="sig-prename descclassname"><span class="pre">apexrl.optimizers.muon.</span></span><span class="sig-name descname"><span class="pre">adam_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buf1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buf2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">betas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/optimizers/muon.html#adam_update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.muon.adam_update" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apexrl.optimizers.muon.muon_update">
+<span class="sig-prename descclassname"><span class="pre">apexrl.optimizers.muon.</span></span><span class="sig-name descname"><span class="pre">muon_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grad</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">momentum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ns_steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nesterov</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/optimizers/muon.html#muon_update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.muon.muon_update" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apexrl.optimizers.muon.zeropower_via_newtonschulz5">
+<span class="sig-prename descclassname"><span class="pre">apexrl.optimizers.muon.</span></span><span class="sig-name descname"><span class="pre">zeropower_via_newtonschulz5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/apexrl/optimizers/muon.html#zeropower_via_newtonschulz5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apexrl.optimizers.muon.zeropower_via_newtonschulz5" title="Link to this definition">¶</a></dt>
+<dd><p>Newton-Schulz iteration to compute the zeroth power / orthogonalization of G. We opt to use a
+quintic iteration whose coefficients are selected to maximize the slope at zero. For the purpose
+of minimizing steps, it turns out to be empirically effective to keep increasing the slope at
+zero even beyond the point where the iteration no longer converges all the way to one everywhere
+on the interval. This iteration therefore does not produce UV^T but rather something like US’V^T
+where S’ is diagonal with S_{ii}’ ~ Uniform(0.5, 1.5), which turns out not to hurt model
+performance at all relative to UV^T, where USV^T = G is the SVD.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>steps</strong> (<em>int</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">ApexRL</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Atticlmr.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.0.4</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/API/apexrl.optimizers.muon.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
