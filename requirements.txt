@@ -1,0 +1,9 @@
+sphinx 
+furo
+myst-parser
+sphinx-copybutton
+sphinx-togglebutton
+sphinx-design
+sphinxcontrib-mermaid
+sphinx-autodoc-typehints
+sphinxcontrib-napoleon

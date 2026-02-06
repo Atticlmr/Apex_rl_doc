@@ -26,3 +26,27 @@ exclude_patterns = []
 
 html_theme = 'alabaster'
 html_static_path = ['_static']
+
+
+html_context = {
+    'display_github': True,
+    'github_user': 'yourname',
+    'github_repo': 'yourproject',
+    'github_version': 'main',
+    'conf_py_path': '/docs/',
+    
+
+    'current_version': 'latest',
+    'version': '0.0.1',
+    'versions': [
+        ('latest', '/en/latest/'),
+        ('stable', '/en/stable/'),
+        ('1.0', '/en/2.0/'),
+        ('1.0', '/en/1.0/'),
+    ],
+}
+
+html_theme_options = {
+    'display_version': True,
+    'version_selector': True,
+}
