@@ -57,20 +57,20 @@ import sys
 sys.path.insert(0, os.path.abspath('../../src'))
 
 extensions = [
-    'sphinx.ext.autodoc',           # 核心：从 docstring 生成文档
-    'sphinx.ext.autosummary',       # 生成摘要表格
-    'sphinx.ext.napoleon',          # 支持 Google/NumPy docstring 风格
-    'sphinx.ext.viewcode',          # 添加源码链接
-    'sphinx_autodoc_typehints',     # 自动提取类型注解
+    'sphinx.ext.autodoc',          
+    'sphinx.ext.autosummary',       
+    'sphinx.ext.napoleon',          
+    'sphinx.ext.viewcode',          
+    'sphinx_autodoc_typehints',     
 ]
 
-# 自动生成 autosummary 文件
+
 autosummary_generate = True
 
-# 类型提示显示在描述中
+
 autodoc_typehints = "description"
 
-# 默认 autodoc 选项
+
 autodoc_default_options = {
     'members': True,
     'undoc-members': True,
