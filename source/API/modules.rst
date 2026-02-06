@@ -1,4 +1,4 @@
-apexrl
+API
 ======
 
 .. toctree::
