@@ -3,76 +3,105 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-# -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+import os
+import sys
 
+# -- Path setup --------------------------------------------------------------
+sys.path.insert(0, os.path.abspath('../../src'))
+
+# -- Project information -----------------------------------------------------
 project = 'ApexRL'
 copyright = '2026, Atticlmr'
 author = 'Atticlmr'
 release = '0.0.1'
+version = '0.0.1'
 
 # -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
-
-extensions = []
-
-templates_path = ['_templates']
-exclude_patterns = []
-
-
-
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
-html_theme = 'alabaster'
-html_static_path = ['_static']
-
-
-html_context = {
-    'display_github': True,
-    'github_user': 'yourname',
-    'github_repo': 'yourproject',
-    'github_version': 'main',
-    'conf_py_path': '/docs/',
-    
-
-    'current_version': 'latest',
-    'version': '0.0.1',
-    'versions': [
-        ('latest', '/en/latest/'),
-        ('stable', '/en/stable/'),
-        ('1.0', '/en/2.0/'),
-        ('1.0', '/en/1.0/'),
-    ],
-}
-
-html_theme_options = {
-    'display_version': True,
-    'version_selector': True,
-}
-
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath('../../src'))
-
 extensions = [
-    'sphinx.ext.autodoc',           # 核心：从 docstring 生成文档
-    'sphinx.ext.autosummary',       # 生成摘要表格
-    'sphinx.ext.napoleon',          # 支持 Google/NumPy docstring 风格
-    'sphinx.ext.viewcode',          # 添加源码链接
-    'sphinx_autodoc_typehints',     # 自动提取类型注解
+    'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.intersphinx',
+    'sphinx_autodoc_typehints',
+    'myst_parser',
 ]
 
-# 自动生成 autosummary 文件
-autosummary_generate = True
+templates_path = ['_templates']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
-# 类型提示显示在描述中
+# -- Options for autodoc -----------------------------------------------------
 autodoc_typehints = "description"
-
-# 默认 autodoc 选项
 autodoc_default_options = {
     'members': True,
     'undoc-members': True,
     'show-inheritance': True,
 }
+autosummary_generate = True
+
+# -- Options for Napoleon ----------------------------------------------------
+napoleon_google_docstring = True
+napoleon_numpy_docstring = True
+napoleon_use_ivar = True
+
+# -- Options for intersphinx -------------------------------------------------
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'torch': ('https://pytorch.org/docs/stable', None),
+    'numpy': ('https://numpy.org/doc/stable', None),
+    'gymnasium': ('https://gymnasium.farama.org/', None),
+}
+
+# -- Options for HTML output -------------------------------------------------
+html_theme = 'furo'
+html_static_path = ['_static']
+
+# Custom CSS
+html_css_files = ['custom.css']
+html_logo = '_static/logo.png'
+html_favicon = '_static/favicon.ico'
+
+# Furo theme options
+html_theme_options = {
+    "sidebar_hide_name": False,
+    "navigation_with_keys": True,
+    "light_css_variables": {
+        "color-brand-primary": "#2563eb",
+        "color-brand-content": "#2563eb",
+    },
+    "dark_css_variables": {
+        "color-brand-primary": "#3b82f6",
+        "color-brand-content": "#3b82f6",
+    },
+    "footer_icons": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/Atticlmr/Apex_rl",
+            "html": """
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            """,
+            "class": "",
+        },
+    ],
+}
+
+# -- Options for MyST parser -------------------------------------------------
+myst_enable_extensions = [
+    "colon_fence",
+    "deflist",
+    "html_admonition",
+    "html_image",
+    "linkify",
+    "replacements",
+    "smartquotes",
+    "substitution",
+    "tasklist",
+]
+
+# -- Internationalization ----------------------------------------------------
+# Language setup for bilingual support
+language = 'en'
+locale_dirs = ['locale/']
+gettext_compact = False

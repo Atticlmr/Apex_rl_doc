@@ -8,11 +8,17 @@ build:
 
 python:
   install:
-    - requirements: requirements.txt
+    - requirements: docs/requirements.txt
+    - method: pip
+      path: .
 
 sphinx:
-  configuration: source/conf.py
+  configuration: docs/source/conf.py
+  fail_on_warning: false
 
 formats:
   - pdf
   - epub
+
+# 多语言构建设置
+# 需要在 RTD 项目设置中配置 translations

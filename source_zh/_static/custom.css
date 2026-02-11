@@ -1,0 +1,41 @@
+/* 中文文档自定义样式 */
+
+/* 改善代码块可读性 */
+.highlight {
+    border-radius: 4px;
+}
+
+/* 更好的表格样式 */
+table.docutils {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.docutils th {
+    background-color: var(--color-background-secondary);
+    font-weight: 600;
+}
+
+table.docutils td,
+table.docutils th {
+    border: 1px solid var(--color-background-border);
+    padding: 8px 12px;
+}
+
+/* 语言切换器样式 */
+.language-switcher {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-background-border);
+}
+
+/* 版本徽章 */
+.version-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background-color: var(--color-brand-primary);
+    color: white;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
