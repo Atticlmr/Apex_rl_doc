@@ -41,6 +41,7 @@ Actor
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 ContinuousActor
 ~~~~~~~~~~~~~~~
@@ -66,6 +67,7 @@ ContinuousActor
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 DiscreteActor
 ~~~~~~~~~~~~~
@@ -86,6 +88,7 @@ DiscreteActor
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 Critic
 ~~~~~~
@@ -109,6 +112,7 @@ Critic
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 MLP 网络
 --------
@@ -147,6 +151,7 @@ MLPActor
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 MLPCritic
 ~~~~~~~~~
@@ -170,6 +175,7 @@ MLPCritic
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 MLPDiscreteActor
 ~~~~~~~~~~~~~~~~
@@ -195,6 +201,7 @@ MLPDiscreteActor
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 CNN 网络
 --------
@@ -227,6 +234,7 @@ CNNActor
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 CNNCritic
 ~~~~~~~~~
@@ -251,6 +259,7 @@ CNNCritic
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 网络构建工具
 ------------
@@ -273,9 +282,10 @@ build_mlp
    )
 
 .. autofunction:: apexrl.models.mlp.build_mlp
+   :noindex:
 
 另请参阅
 --------
 
 - :doc:`../tutorials/custom_network` - 自定义网络教程
-- :doc:`../api/apexrl.models` - 完整 API 参考
+- :doc:`../API/apexrl.models` - 完整 API 参考

@@ -9,7 +9,7 @@ Overview
 Available buffer types:
 
 1. **RolloutBuffer** - On-policy data storage (PPO)
-2. **ReplayBuffer** - Off-policy data storage (DQN, SAC - planned)
+2. **ReplayBuffer** - Off-policy data storage (DQN)
 3. **DistillationBuffer** - Policy distillation data
 
 RolloutBuffer
@@ -79,6 +79,7 @@ API Reference
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 Data Flow
 ~~~~~~~~~
@@ -160,7 +161,7 @@ so ``dones`` in the stored rollout reflect the bootstrap mask used by PPO.
 ReplayBuffer
 ------------
 
-For off-policy algorithms (DQN, SAC - planned):
+For off-policy algorithms such as DQN:
 
 .. code-block:: python
 
@@ -169,7 +170,7 @@ For off-policy algorithms (DQN, SAC - planned):
    buffer = ReplayBuffer(
        capacity=1_000_000,
        obs_shape=(4,),
-       action_shape=(2,),
+       action_shape=(),
        device="cuda",
    )
 
@@ -179,6 +180,10 @@ For off-policy algorithms (DQN, SAC - planned):
    # Sample batch
    batch = buffer.sample(batch_size=256)
 
+For discrete-action DQN, ``action_shape=()`` stores scalar action indices. The
+same buffer also supports vector actions for future off-policy continuous-control
+algorithms by setting ``action_shape`` explicitly.
+
 API Reference
 ~~~~~~~~~~~~~
 
@@ -186,35 +191,23 @@ API Reference
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 DistillationBuffer
 ------------------
 
-For policy distillation and imitation learning:
+For policy distillation and imitation learning.
 
-.. code-block:: python
+.. note::
 
-   from apexrl.buffer.distillation_buffer import DistillationBuffer
-
-   buffer = DistillationBuffer(
-       capacity=100_000,
-       obs_shape=(48,),
-       device="cuda",
-   )
-
-   # Store expert demonstration
-   buffer.add(obs, action)
-
-   # Sample for distillation
-   obs, expert_actions = buffer.sample(batch_size=256)
+   ``DistillationBuffer`` is still planned and is not implemented in the
+   runtime package yet. This section documents the intended scope only.
 
 API Reference
 ~~~~~~~~~~~~~
 
-.. autoclass:: apexrl.buffer.distillation_buffer.DistillationBuffer
-   :members:
-   :undoc-members:
-   :show-inheritance:
+See :doc:`../API/apexrl.buffer.distillation_buffer` for the current module
+status.
 
 Best Practices
 --------------
@@ -228,5 +221,5 @@ Best Practices
 See Also
 --------
 
-- :doc:`../api/apexrl.buffer` - Full API reference
+- :doc:`../API/apexrl.buffer` - Full API reference
 - :doc:`../modules/algorithms` - Algorithm implementations

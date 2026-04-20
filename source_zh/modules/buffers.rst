@@ -9,7 +9,7 @@ ApexRL 提供高效的缓冲区实现，用于存储和处理训练数据。
 可用的缓冲区类型：
 
 1. **RolloutBuffer** - 同策略数据存储（PPO）
-2. **ReplayBuffer** - 异策略数据存储（DQN、SAC - 计划中）
+2. **ReplayBuffer** - 异策略数据存储（DQN）
 3. **DistillationBuffer** - 策略蒸馏数据
 
 RolloutBuffer
@@ -79,6 +79,7 @@ API 参考
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 数据流
 ~~~~~~
@@ -160,7 +161,7 @@ timeout bootstrap 会在写入缓冲区前完成，因此缓冲区中的 ``dones
 ReplayBuffer
 ------------
 
-用于异策略算法（DQN、SAC - 计划中）：
+用于 DQN 等异策略算法：
 
 .. code-block:: python
 
@@ -169,7 +170,7 @@ ReplayBuffer
    buffer = ReplayBuffer(
        capacity=1_000_000,
        obs_shape=(4,),
-       action_shape=(2,),
+       action_shape=(),
        device="cuda",
    )
 
@@ -179,6 +180,9 @@ ReplayBuffer
    # 采样批次
    batch = buffer.sample(batch_size=256)
 
+对于离散动作 DQN，``action_shape=()`` 用于存储标量动作索引。未来如果加入
+连续动作的异策略算法，也可以通过显式设置 ``action_shape`` 来复用这套 buffer。
+
 API 参考
 ~~~~~~~~
 
@@ -186,35 +190,22 @@ API 参考
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 DistillationBuffer
 ------------------
 
-用于策略蒸馏和模仿学习：
+用于策略蒸馏和模仿学习。
 
-.. code-block:: python
+.. note::
 
-   from apexrl.buffer.distillation_buffer import DistillationBuffer
-
-   buffer = DistillationBuffer(
-       capacity=100_000,
-       obs_shape=(48,),
-       device="cuda",
-   )
-
-   # 存储专家演示
-   buffer.add(obs, action)
-
-   # 采样用于蒸馏
-   obs, expert_actions = buffer.sample(batch_size=256)
+   ``DistillationBuffer`` 目前仍处于规划阶段，运行时代码里还没有正式实现。
+   这里保留的是设计意图说明，而不是可直接调用的 API。
 
 API 参考
 ~~~~~~~~
 
-.. autoclass:: apexrl.buffer.distillation_buffer.DistillationBuffer
-   :members:
-   :undoc-members:
-   :show-inheritance:
+当前模块状态参见 :doc:`../API/apexrl.buffer.distillation_buffer`。
 
 最佳实践
 --------
@@ -228,5 +219,5 @@ API 参考
 另请参阅
 --------
 
-- :doc:`../api/apexrl.buffer` - 完整 API 参考
+- :doc:`../API/apexrl.buffer` - 完整 API 参考
 - :doc:`../modules/algorithms` - 算法实现

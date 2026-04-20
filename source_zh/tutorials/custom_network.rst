@@ -253,7 +253,7 @@ Critic 网络
            return torch.distributions.Normal(mean, std)
 
 循环网络（LSTM/GRU）
--------------------
+------------------------
 
 用于部分可观测环境：
 

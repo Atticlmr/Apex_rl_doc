@@ -32,7 +32,7 @@ ApexRL 文档
 
 * :doc:`quickstart` - 5 分钟快速入门
 * :doc:`tutorials/first_agent` - 创建您的第一个 RL 智能体
-* :doc:`api/modules` - API 参考
+* :doc:`API/modules` - API 参考
 
 .. toctree::
    :hidden:

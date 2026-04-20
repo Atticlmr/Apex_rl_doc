@@ -41,6 +41,7 @@ The base class for all policy networks:
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 ContinuousActor
 ~~~~~~~~~~~~~~~
@@ -67,6 +68,7 @@ aligned with the policy distribution, while environment wrappers such as
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 DiscreteActor
 ~~~~~~~~~~~~~
@@ -87,6 +89,7 @@ For discrete action spaces using Categorical distributions:
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 Critic
 ~~~~~~
@@ -110,6 +113,7 @@ For value function estimation:
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 MLP Networks
 ------------
@@ -149,6 +153,7 @@ output layers use gain 1.0.
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 MLPCritic
 ~~~~~~~~~
@@ -172,6 +177,7 @@ Multi-layer perceptron critic:
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 MLPDiscreteActor
 ~~~~~~~~~~~~~~~~
@@ -197,6 +203,7 @@ Multi-layer perceptron actor for discrete actions:
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 CNN Networks
 ------------
@@ -229,6 +236,7 @@ Convolutional neural network actor for image observations:
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 CNNCritic
 ~~~~~~~~~
@@ -253,6 +261,7 @@ Convolutional neural network critic:
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 Network Construction Utilities
 ------------------------------
@@ -275,9 +284,10 @@ Helper function to build MLP networks:
    )
 
 .. autofunction:: apexrl.models.mlp.build_mlp
+   :noindex:
 
 See Also
 --------
 
 - :doc:`../tutorials/custom_network` - Custom network tutorial
-- :doc:`../api/apexrl.models` - Full API reference
+- :doc:`../API/apexrl.models` - Full API reference

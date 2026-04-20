@@ -12,6 +12,7 @@ The runner module provides high-level interfaces for:
 2. **Logging** - TensorBoard integration
 3. **Checkpointing** - Model saving and loading
 4. **Evaluation** - Periodic agent evaluation
+5. **On-policy and Off-policy Entry Points** - PPO and DQN-style workflows
 
 OnPolicyRunner
 --------------
@@ -87,6 +88,7 @@ API Reference
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 Training Loop
 ~~~~~~~~~~~~~
@@ -278,4 +280,82 @@ See Also
 --------
 
 - :doc:`../tutorials/first_agent` - Detailed usage tutorial
-- :doc:`../api/apexrl.agent` - Full API reference
+- :doc:`../API/apexrl.agent` - Full API reference
+
+OffPolicyRunner
+---------------
+
+The ``OffPolicyRunner`` is the canonical training entrypoint for off-policy
+algorithms such as DQN. It owns environment interaction, replay insertion,
+epsilon-greedy exploration, and scheduled gradient updates.
+
+Key Features
+~~~~~~~~~~~~
+
+- Replay-buffer-driven training loop
+- Epsilon-greedy exploration scheduling
+- Periodic target-network updates via the algorithm
+- Unified logging, checkpointing, and evaluation
+
+Basic Usage
+~~~~~~~~~~~
+
+.. code-block:: python
+
+   import torch
+   from gymnasium import make
+
+   from apexrl.agent.off_policy_runner import OffPolicyRunner
+   from apexrl.algorithms.dqn import DQNConfig
+   from apexrl.envs.gym_wrapper import GymVecEnv
+   from apexrl.models import MLPQNetwork
+
+   env = GymVecEnv([lambda: make("CartPole-v1") for _ in range(4)], device="cpu")
+   cfg = DQNConfig(double_dqn=True, dueling=True)
+
+   runner = OffPolicyRunner(
+       env=env,
+       cfg=cfg,
+       q_network_class=MLPQNetwork,
+       device=torch.device("cpu"),
+   )
+   runner.learn(total_timesteps=200_000)
+
+API Reference
+~~~~~~~~~~~~~
+
+.. autoclass:: apexrl.agent.off_policy_runner.OffPolicyRunner
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
+Training Loop
+~~~~~~~~~~~~~
+
+The off-policy loop structure:
+
+.. code-block:: text
+
+   for step in range(total_timesteps):
+       action = epsilon_greedy(q_network, obs)
+       next_obs, reward, done, extras = env.step(action)
+       replay_buffer.add(obs, action, reward, next_obs, done)
+
+       if step >= learning_starts and step % train_freq == 0:
+           for _ in range(gradient_steps):
+               update()
+
+       if step % save_interval == 0:
+           save_checkpoint()
+
+Logging
+~~~~~~~
+
+Common DQN metrics:
+
+- ``train/q_loss`` - TD loss
+- ``train/mean_q`` - Mean selected Q value
+- ``train/td_target_mean`` - Mean TD target
+- ``exploration/epsilon`` - Current epsilon
+- ``buffer/size`` - Replay buffer size

@@ -19,7 +19,7 @@ Available Algorithms
      - Proximal Policy Optimization
    * - DQN
      - Off-policy
-     - 🚧 Planned
+     - ✅ Available
      - Deep Q-Network
    * - SAC
      - Off-policy
@@ -84,6 +84,7 @@ Configuration
 .. autoclass:: apexrl.algorithms.ppo.config.PPOConfig
    :members:
    :undoc-members:
+   :noindex:
 
 API Reference
 ~~~~~~~~~~~~~
@@ -92,6 +93,7 @@ API Reference
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 Algorithm Details
 -----------------
@@ -272,4 +274,93 @@ See Also
 
 - :doc:`../tutorials/first_agent` - Basic usage tutorial
 - :doc:`../tutorials/custom_network` - Custom network architectures
-- :doc:`../api/apexrl.algorithms.ppo` - Full API reference
+- :doc:`../API/apexrl.algorithms.ppo` - Full API reference
+
+DQN (Deep Q-Network)
+--------------------
+
+DQN is available for discrete-action environments through ``ReplayBuffer``,
+``OffPolicyRunner``, and MLP-based Q networks. The current implementation
+supports standard DQN, Double DQN, and Dueling DQN.
+
+Key Features
+~~~~~~~~~~~~
+
+- Experience replay with device-resident sampling
+- Target network updates with hard or soft synchronization
+- ``double_dqn`` target computation
+- ``dueling`` Q-network architecture
+- Epsilon-greedy exploration
+
+Basic Usage
+~~~~~~~~~~~
+
+.. code-block:: python
+
+   import torch
+   from gymnasium import make
+
+   from apexrl.agent.off_policy_runner import OffPolicyRunner
+   from apexrl.algorithms.dqn import DQNConfig
+   from apexrl.envs.gym_wrapper import GymVecEnv
+   from apexrl.models import MLPQNetwork
+
+   env = GymVecEnv([lambda: make("CartPole-v1") for _ in range(4)], device="cpu")
+
+   cfg = DQNConfig(
+       double_dqn=True,
+       dueling=True,
+       learning_starts=1_000,
+       batch_size=128,
+   )
+
+   runner = OffPolicyRunner(
+       env=env,
+       cfg=cfg,
+       q_network_class=MLPQNetwork,
+       device=torch.device("cpu"),
+   )
+   runner.learn(total_timesteps=200_000)
+
+``DQN.learn()`` is also available as a convenience wrapper, but
+``OffPolicyRunner`` is the canonical training entrypoint for off-policy methods.
+
+Configuration
+~~~~~~~~~~~~~
+
+.. autoclass:: apexrl.algorithms.dqn.config.DQNConfig
+   :members:
+   :undoc-members:
+   :noindex:
+
+API Reference
+~~~~~~~~~~~~~
+
+.. autoclass:: apexrl.algorithms.dqn.dqn.DQN
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
+Implementation Notes
+~~~~~~~~~~~~~~~~~~~~
+
+- Set ``double_dqn=True`` to reduce overestimation bias.
+- Set ``dueling=True`` to split value and advantage estimation in the Q network.
+- ``MLPQNetwork`` supports both standard and dueling layouts through config only.
+
+Smoke Benchmarks
+~~~~~~~~~~~~~~~~
+
+The benchmark script includes lightweight DQN and Dueling DQN smoke tasks:
+
+.. code-block:: bash
+
+   python benchmarks/run_smoke_benchmarks.py --iterations 1 --num-envs 1
+
+Included off-policy smoke tasks:
+
+- ``CartPole-v1 (DQN)``
+- ``CartPole-v1 (Dueling DQN)``
+- ``Acrobot-v1 (DQN)``
+- ``Acrobot-v1 (Dueling DQN)``

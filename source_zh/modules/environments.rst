@@ -49,6 +49,7 @@ API 参考
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 DummyVecEnv
 ~~~~~~~~~~~
@@ -113,11 +114,13 @@ API 参考
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 .. autoclass:: apexrl.envs.gym_wrapper.GymVecEnvContinuous
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 环境包装器
 ----------
@@ -156,6 +159,7 @@ API 参考
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 第三方集成
 ----------
@@ -266,4 +270,4 @@ Brax (JAX)
 --------
 
 - :doc:`../tutorials/custom_environment` - 详细集成教程
-- :doc:`../api/apexrl.envs` - 完整 API 参考
+- :doc:`../API/apexrl.envs` - 完整 API 参考

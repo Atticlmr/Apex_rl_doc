@@ -49,6 +49,7 @@ API Reference
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 DummyVecEnv
 ~~~~~~~~~~~
@@ -113,11 +114,13 @@ API Reference
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 .. autoclass:: apexrl.envs.gym_wrapper.GymVecEnvContinuous
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 Environment Wrappers
 --------------------
@@ -156,6 +159,7 @@ API Reference
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 Third-Party Integrations
 ------------------------
@@ -266,4 +270,4 @@ See Also
 --------
 
 - :doc:`../tutorials/custom_environment` - Detailed integration tutorial
-- :doc:`../api/apexrl.envs` - Full API reference
+- :doc:`../API/apexrl.envs` - Full API reference

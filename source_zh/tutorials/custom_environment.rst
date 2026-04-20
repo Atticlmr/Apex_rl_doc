@@ -13,7 +13,7 @@ ApexRL 支持多种环境类型：
 3. **GPU 环境** - CUDA 加速环境（Isaac Gym 等）
 
 Gymnasium 包装器
----------------
+--------------------
 
 对于标准 Gymnasium 环境，使用内置的 ``GymVecEnv``：
 

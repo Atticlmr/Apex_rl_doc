@@ -32,7 +32,7 @@ Quick Links
 
 * :doc:`quickstart` - Get started in 5 minutes
 * :doc:`tutorials/first_agent` - Create your first RL agent
-* :doc:`api/modules` - API reference
+* :doc:`API/modules` - API reference
 
 .. toctree::
    :hidden:

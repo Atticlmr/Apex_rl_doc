@@ -12,6 +12,7 @@ Runner 模块为以下功能提供高级接口：
 2. **日志记录** - TensorBoard 集成
 3. **检查点保存** - 模型保存和加载
 4. **评估** - 定期智能体评估
+5. **同策略 / 异策略入口** - PPO 和 DQN 风格训练
 
 OnPolicyRunner
 --------------
@@ -86,6 +87,7 @@ API 参考
    :members:
    :undoc-members:
    :show-inheritance:
+   :noindex:
 
 训练循环
 ~~~~~~~~
@@ -277,4 +279,81 @@ Runner 自动：
 --------
 
 - :doc:`../tutorials/first_agent` - 详细使用教程
-- :doc:`../api/apexrl.agent` - 完整 API 参考
+- :doc:`../API/apexrl.agent` - 完整 API 参考
+
+OffPolicyRunner
+---------------
+
+``OffPolicyRunner`` 是 DQN 等异策略算法的标准训练入口。它负责环境交互、
+经验回放写入、epsilon-greedy 探索以及定期梯度更新。
+
+关键特性
+~~~~~~~~
+
+- 基于 replay buffer 的训练循环
+- epsilon-greedy 探索调度
+- 由算法对象控制 target network 更新
+- 统一的日志、检查点和评估流程
+
+基本用法
+~~~~~~~~
+
+.. code-block:: python
+
+   import torch
+   from gymnasium import make
+
+   from apexrl.agent.off_policy_runner import OffPolicyRunner
+   from apexrl.algorithms.dqn import DQNConfig
+   from apexrl.envs.gym_wrapper import GymVecEnv
+   from apexrl.models import MLPQNetwork
+
+   env = GymVecEnv([lambda: make("CartPole-v1") for _ in range(4)], device="cpu")
+   cfg = DQNConfig(double_dqn=True, dueling=True)
+
+   runner = OffPolicyRunner(
+       env=env,
+       cfg=cfg,
+       q_network_class=MLPQNetwork,
+       device=torch.device("cpu"),
+   )
+   runner.learn(total_timesteps=200_000)
+
+API 参考
+~~~~~~~~
+
+.. autoclass:: apexrl.agent.off_policy_runner.OffPolicyRunner
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
+训练循环
+~~~~~~~~
+
+异策略训练循环结构：
+
+.. code-block:: text
+
+   for step in range(total_timesteps):
+       action = epsilon_greedy(q_network, obs)
+       next_obs, reward, done, extras = env.step(action)
+       replay_buffer.add(obs, action, reward, next_obs, done)
+
+       if step >= learning_starts and step % train_freq == 0:
+           for _ in range(gradient_steps):
+               update()
+
+       if step % save_interval == 0:
+           save_checkpoint()
+
+日志记录
+~~~~~~~~
+
+常见 DQN 指标：
+
+- ``train/q_loss`` - TD 损失
+- ``train/mean_q`` - 被选动作的平均 Q 值
+- ``train/td_target_mean`` - TD target 平均值
+- ``exploration/epsilon`` - 当前 epsilon
+- ``buffer/size`` - replay buffer 大小
