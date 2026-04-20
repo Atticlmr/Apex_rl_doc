@@ -6,6 +6,37 @@ ApexRL 的所有显著变更都将记录在此文件中。
 格式基于 `Keep a Changelog <https://keepachangelog.com/zh-CN/1.0.0/>`_，
 本项目遵循 `语义化版本控制 <https://semver.org/lang/zh-CN/>`_。
 
+[0.0.3] - 2026-04-20
+--------------------
+
+修复
+~~~~
+
+- 当未配置 ``PYPI_API_TOKEN`` 时，发布工作流会跳过 PyPI 发布而不是直接失败。
+
+文档
+~~~~
+
+- 更新中英文文档，同步新的 PPO 训练入口、连续动作默认行为和 timeout 语义。
+
+[0.0.2] - 2026-04-20
+--------------------
+
+变更
+~~~~
+
+- ``PPO.learn()`` 现在委托给 ``OnPolicyRunner``，统一同策略训练循环、日志和检查点行为。
+- 连续动作 PPO 默认改为未经过 ``tanh`` 压缩的高斯策略，并限制可学习标准差范围。
+
+修复
+~~~~
+
+- ``RolloutBuffer`` 现在能正确存储多维连续动作。
+- Gymnasium 包装器现在返回 ``terminated``、``truncated`` 和
+  ``final_observation``，使 PPO 能正确处理截断回合的 bootstrap。
+- 新增 ``CartPole-v1``、``Pendulum-v1`` 和
+  ``MountainCarContinuous-v0`` 的 smoke 覆盖。
+
 [0.0.1] - 2026-02-11
 --------------------
 

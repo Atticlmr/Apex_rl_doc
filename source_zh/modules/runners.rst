@@ -16,7 +16,8 @@ Runner 模块为以下功能提供高级接口：
 OnPolicyRunner
 --------------
 
-``OnPolicyRunner`` 管理同策略算法如 PPO 的训练。
+``OnPolicyRunner`` 是 PPO 等同策略算法的标准训练入口。它负责外层训练循环，
+而算法对象只负责 rollout 解释、损失计算和优化步骤。
 
 关键特性
 ~~~~~~~~
@@ -26,6 +27,7 @@ OnPolicyRunner
 - 定期检查点保存
 - 奖励组件跟踪
 - 环境指标记录
+- 统一处理 ``terminated`` / ``truncated`` 超时语义
 
 基本用法
 ~~~~~~~~
@@ -73,6 +75,9 @@ OnPolicyRunner
        save_interval=100,                # 每 N 次迭代保存
        log_reward_components=True,       # 记录奖励组件
    )
+
+如果您直接实例化 ``PPO``，``PPO.learn()`` 也会委托给这个 runner，
+从而只维护一套同策略训练循环。
 
 API 参考
 ~~~~~~~~
@@ -169,7 +174,10 @@ Runner 自动记录指标到 TensorBoard：
 
    # 在环境 step() 中
    extras = {
-       "time_outs": time_outs,
+       "time_outs": truncated,  # 向后兼容别名
+       "terminated": terminated,
+       "truncated": truncated,
+       "final_observation": final_obs,
        "reward_components": {
            "velocity": velocity_reward,
            "energy": -energy_penalty,
@@ -185,6 +193,10 @@ Runner 自动：
 1. 每回合累加奖励组件
 2. 回合结束时记录平均值
 3. 从 ``extras["log"]`` 记录自定义指标
+
+超时语义遵循 Gymnasium：``terminated`` 表示真实终止，
+``truncated`` 表示时间限制或外部截断，``final_observation``
+用于在截断回合上做 value bootstrap。
 
 检查点保存
 ~~~~~~~~~~

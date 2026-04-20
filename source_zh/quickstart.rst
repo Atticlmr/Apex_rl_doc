@@ -39,16 +39,17 @@
 
    import gymnasium as gym
    from apexrl.agent.on_policy_runner import OnPolicyRunner
-   from apexrl.envs.gym_wrapper import GymVecEnv
+   from apexrl.envs.gym_wrapper import GymVecEnvContinuous
    from apexrl.models.mlp import MLPActor, MLPCritic
 
    # 创建向量化环境
    def make_env():
        return gym.make("Pendulum-v1")
 
-   env = GymVecEnv([make_env for _ in range(8)], device="cpu")
+   env = GymVecEnvContinuous([make_env for _ in range(8)], device="cpu")
 
    # 使用默认 PPO 配置创建 runner
+   # OnPolicyRunner 是 PPO 的标准训练入口。
    runner = OnPolicyRunner(
        env=env,
        algorithm="ppo",
@@ -103,6 +104,10 @@
        critic_class=MLPCritic,
        # ... 其他参数
    )
+
+连续动作 PPO 默认使用未经过 ``tanh`` 压缩的高斯策略
+（``use_tanh_squash=False``）。推荐配合 ``GymVecEnvContinuous``，
+由环境包装器负责裁剪和缩放到 Gymnasium 的动作范围。
 
 下一步
 ------

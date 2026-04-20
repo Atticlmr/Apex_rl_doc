@@ -31,7 +31,7 @@
    import torch
 
    from apexrl.agent.on_policy_runner import OnPolicyRunner
-   from apexrl.envs.gym_wrapper import GymVecEnv
+   from apexrl.envs.gym_wrapper import GymVecEnvContinuous
    from apexrl.models.mlp import MLPActor, MLPCritic
 
 第二步：创建环境
@@ -47,7 +47,7 @@ ApexRL 使用向量化环境进行并行训练。让我们创建 8 个并行的 
 
    # 创建 8 个并行环境
    num_envs = 8
-   env = GymVecEnv([make_env for _ in range(num_envs)], device="cpu")
+   env = GymVecEnvContinuous([make_env for _ in range(num_envs)], device="cpu")
 
    print(f"环境数量: {env.num_envs}")
    print(f"观测维度: {env.num_obs}")
@@ -56,7 +56,8 @@ ApexRL 使用向量化环境进行并行训练。让我们创建 8 个并行的 
 第三步：配置 Runner
 -------------------
 
-``OnPolicyRunner`` 处理训练循环、日志记录和检查点保存：
+``OnPolicyRunner`` 处理训练循环、日志记录和检查点保存，
+也是 PPO 的标准训练入口：
 
 .. code-block:: python
 
@@ -128,7 +129,7 @@ ApexRL 使用向量化环境进行并行训练。让我们创建 8 个并行的 
 
    import gymnasium as gym
    from apexrl.agent.on_policy_runner import OnPolicyRunner
-   from apexrl.envs.gym_wrapper import GymVecEnv
+   from apexrl.envs.gym_wrapper import GymVecEnvContinuous
    from apexrl.models.mlp import MLPActor, MLPCritic
 
    def main():
@@ -136,7 +137,7 @@ ApexRL 使用向量化环境进行并行训练。让我们创建 8 个并行的 
        def make_env():
            return gym.make("Pendulum-v1")
        
-       env = GymVecEnv([make_env for _ in range(8)], device="cpu")
+       env = GymVecEnvContinuous([make_env for _ in range(8)], device="cpu")
        
        # 创建 runner
        runner = OnPolicyRunner(
@@ -178,6 +179,9 @@ ApexRL 使用向量化环境进行并行训练。让我们创建 8 个并行的 
 - KL 散度
 - 梯度范数
 - 学习率调度
+
+``PPO.learn()`` 仍然可用，但它内部会委托给这里展示的同一个
+``OnPolicyRunner`` 实现。
 
 下一步
 ------

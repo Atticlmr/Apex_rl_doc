@@ -31,7 +31,7 @@ Step 1: Import Libraries
    import torch
 
    from apexrl.agent.on_policy_runner import OnPolicyRunner
-   from apexrl.envs.gym_wrapper import GymVecEnv
+   from apexrl.envs.gym_wrapper import GymVecEnvContinuous
    from apexrl.models.mlp import MLPActor, MLPCritic
 
 Step 2: Create the Environment
@@ -47,7 +47,7 @@ ApexRL uses vectorized environments for parallel training. Let's create 8 parall
 
    # Create 8 parallel environments
    num_envs = 8
-   env = GymVecEnv([make_env for _ in range(num_envs)], device="cpu")
+   env = GymVecEnvContinuous([make_env for _ in range(num_envs)], device="cpu")
 
    print(f"Number of environments: {env.num_envs}")
    print(f"Observation dimension: {env.num_obs}")
@@ -56,7 +56,8 @@ ApexRL uses vectorized environments for parallel training. Let's create 8 parall
 Step 3: Configure the Runner
 ----------------------------
 
-The ``OnPolicyRunner`` handles the training loop, logging, and checkpointing:
+The ``OnPolicyRunner`` handles the training loop, logging, and checkpointing.
+It is also the canonical training entrypoint for PPO:
 
 .. code-block:: python
 
@@ -128,7 +129,7 @@ Here's the complete training script:
 
    import gymnasium as gym
    from apexrl.agent.on_policy_runner import OnPolicyRunner
-   from apexrl.envs.gym_wrapper import GymVecEnv
+   from apexrl.envs.gym_wrapper import GymVecEnvContinuous
    from apexrl.models.mlp import MLPActor, MLPCritic
 
    def main():
@@ -136,7 +137,7 @@ Here's the complete training script:
        def make_env():
            return gym.make("Pendulum-v1")
        
-       env = GymVecEnv([make_env for _ in range(8)], device="cpu")
+       env = GymVecEnvContinuous([make_env for _ in range(8)], device="cpu")
        
        # Create runner
        runner = OnPolicyRunner(
@@ -178,6 +179,9 @@ Open your browser at ``http://localhost:6006`` to see:
 - KL divergence
 - Gradient norms
 - Learning rate schedule
+
+``PPO.learn()`` remains available, but it delegates to the same
+``OnPolicyRunner`` implementation shown here.
 
 Next Steps
 ----------

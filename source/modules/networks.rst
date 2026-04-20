@@ -58,6 +58,11 @@ For continuous action spaces using Gaussian distributions:
            std = torch.exp(self.log_std)
            return torch.distributions.Normal(mean, std)
 
+For PPO, the default recommendation is an unsquashed Gaussian policy
+(``use_tanh_squash=False``). This keeps the log-probability and entropy terms
+aligned with the policy distribution, while environment wrappers such as
+``GymVecEnvContinuous`` handle clipping and scaling to action bounds.
+
 .. autoclass:: apexrl.models.base.ContinuousActor
    :members:
    :undoc-members:
@@ -130,9 +135,15 @@ Multi-layer perceptron actor for continuous actions:
            "activation": "elu",
            "learn_std": True,
            "init_std": 1.0,
+           "min_log_std": -5.0,
+           "max_log_std": 2.0,
            "layer_norm": False,
        }
    )
+
+The default MLP/CNN initializers are PPO-oriented: hidden layers use a larger
+gain for stable optimization, policy output layers use a small gain, and value
+output layers use gain 1.0.
 
 .. autoclass:: apexrl.models.mlp.MLPActor
    :members:

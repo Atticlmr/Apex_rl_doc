@@ -22,6 +22,7 @@ RolloutBuffer
 
 - GPU 上的高效张量存储
 - 支持多维观测
+- 同时支持标量离散动作和多维连续动作
 - 广义优势估计（GAE）
 - 用于非对称 Actor-Critic 的特权观测
 
@@ -36,6 +37,8 @@ RolloutBuffer
        num_envs=4096,
        num_steps=24,
        obs_shape=(48,),
+       action_shape=(12,),
+       action_dtype=torch.float32,
        device="cuda",
        num_privileged_obs=0,
    )
@@ -109,6 +112,9 @@ Rollout 数据流：
 
    # 观测: (num_steps, num_envs, *obs_shape)
    self.observations  # 形状: (24, 4096, 48)
+
+   # 连续动作: (num_steps, num_envs, *action_shape)
+   self.actions       # 形状: (24, 4096, 12)
    
    # 标量: (num_steps, num_envs)
    self.rewards       # 形状: (24, 4096)
@@ -147,6 +153,9 @@ GAE 计算
        
        self.advantages = advantages
        self.returns = advantages + self.values
+
+timeout bootstrap 会在写入缓冲区前完成，因此缓冲区中的 ``dones``
+表示 PPO 实际用于 bootstrap 的 mask。
 
 ReplayBuffer
 ------------

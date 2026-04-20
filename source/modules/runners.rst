@@ -16,7 +16,9 @@ The runner module provides high-level interfaces for:
 OnPolicyRunner
 --------------
 
-The ``OnPolicyRunner`` manages training for on-policy algorithms like PPO.
+The ``OnPolicyRunner`` is the canonical training entrypoint for on-policy
+algorithms like PPO. It owns the outer training loop, while the algorithm
+object focuses on rollout interpretation, loss computation, and optimization.
 
 Key Features
 ~~~~~~~~~~~~
@@ -26,6 +28,7 @@ Key Features
 - Periodic checkpoint saving
 - Reward component tracking
 - Environment metrics logging
+- Unified timeout handling for ``terminated`` / ``truncated`` episodes
 
 Basic Usage
 ~~~~~~~~~~~
@@ -73,6 +76,9 @@ Configuration
        save_interval=100,                # Save every N iterations
        log_reward_components=True,       # Log reward components
    )
+
+If you instantiate ``PPO`` directly, ``PPO.learn()`` delegates to this runner so
+there is only one on-policy training loop to maintain.
 
 API Reference
 ~~~~~~~~~~~~~
@@ -169,7 +175,10 @@ Track individual reward components:
 
    # In environment step()
    extras = {
-       "time_outs": time_outs,
+       "time_outs": truncated,  # Backward-compatible alias
+       "terminated": terminated,
+       "truncated": truncated,
+       "final_observation": final_obs,
        "reward_components": {
            "velocity": velocity_reward,
            "energy": -energy_penalty,
@@ -185,6 +194,10 @@ The runner automatically:
 1. Accumulates reward components per episode
 2. Logs mean values at episode end
 3. Logs custom metrics from ``extras["log"]``
+
+Timeout semantics follow Gymnasium: ``terminated`` marks true terminals,
+``truncated`` marks time limits or external truncation, and
+``final_observation`` is used for value bootstrapping on truncated episodes.
 
 Checkpointing
 ~~~~~~~~~~~~~

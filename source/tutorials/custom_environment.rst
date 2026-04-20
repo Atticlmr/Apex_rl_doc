@@ -42,7 +42,6 @@ For GPU-accelerated environments (like Isaac Gym), implement the ``VecEnv`` inte
 
    import torch
    from typing import Dict, Tuple, Union
-   from tensordict import TensorDict
    from apexrl.envs.vecenv import VecEnv
 
    class MyCustomVecEnv(VecEnv):
@@ -122,15 +121,20 @@ For GPU-accelerated environments (like Isaac Gym), implement the ``VecEnv`` inte
            
            # Check terminations
            self.episode_length_buf += 1
-           time_outs = self.episode_length_buf >= self.max_episode_length
-           self.reset_buf = time_outs.clone()  # or add other termination conditions
+           terminated = torch.zeros_like(self.reset_buf)
+           truncated = self.episode_length_buf >= self.max_episode_length
+           self.reset_buf = terminated | truncated
+           final_obs = self.obs_buf.clone()
            
-           # Reset environments that timed out
-           if time_outs.any():
-               self.reset_idx(torch.where(time_outs)[0])
+           # Reset environments that ended
+           if self.reset_buf.any():
+               self.reset_idx(torch.where(self.reset_buf)[0])
            
            extras = {
-               "time_outs": time_outs,
+               "time_outs": truncated,  # Backward-compatible alias
+               "terminated": terminated,
+               "truncated": truncated,
+               "final_observation": final_obs,
                "log": {
                    "/reward/mean": self.rew_buf.mean().item(),
                    "/episode_length/mean": self.episode_length_buf.float().mean().item(),
@@ -256,7 +260,13 @@ Example integration with Isaac Gym:
            if self.reset_buf.any():
                self.reset_idx(torch.where(self.reset_buf)[0])
            
-           extras = {"time_outs": self.reset_buf.clone(), "log": {}}
+           extras = {
+               "time_outs": self.reset_buf.clone(),
+               "terminated": torch.zeros_like(self.reset_buf),
+               "truncated": self.reset_buf.clone(),
+               "final_observation": self.obs_buf.clone(),
+               "log": {},
+           }
            return self.obs_buf, self.rew_buf, self.reset_buf, extras
 
 Best Practices
@@ -264,9 +274,10 @@ Best Practices
 
 1. **Device Consistency**: Ensure all tensors are on the same device
 2. **Partial Reset**: Always implement ``reset_idx()`` for efficiency
-3. **Time Outs**: Use ``extras["time_outs"]`` to distinguish timeout from failure
-4. **Logging**: Add useful metrics to ``extras["log"]`` for monitoring
-5. **Buffer Pre-allocation**: Pre-allocate buffers to avoid memory allocation during step
+3. **Episode End Semantics**: Return ``terminated`` and ``truncated`` separately
+4. **Final Observation**: Provide ``extras["final_observation"]`` for truncated episodes
+5. **Logging**: Add useful metrics to ``extras["log"]`` for monitoring
+6. **Buffer Pre-allocation**: Pre-allocate buffers to avoid memory allocation during step
 
 Next Steps
 ----------

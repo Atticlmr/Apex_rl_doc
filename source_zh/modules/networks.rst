@@ -58,6 +58,10 @@ ContinuousActor
            std = torch.exp(self.log_std)
            return torch.distributions.Normal(mean, std)
 
+对于 PPO，默认推荐使用未经过 ``tanh`` 压缩的高斯策略
+（``use_tanh_squash=False``）。这样策略分布、log-prob 和 entropy
+语义保持一致，再由 ``GymVecEnvContinuous`` 之类的环境包装器负责裁剪和缩放。
+
 .. autoclass:: apexrl.models.base.ContinuousActor
    :members:
    :undoc-members:
@@ -130,9 +134,14 @@ MLPActor
            "activation": "elu",
            "learn_std": True,
            "init_std": 1.0,
+           "min_log_std": -5.0,
+           "max_log_std": 2.0,
            "layer_norm": False,
        }
    )
+
+当前默认的 MLP/CNN 初始化更贴近 PPO：隐藏层使用较大的 gain，
+策略输出层使用较小的 gain，价值输出层使用 gain 1.0。
 
 .. autoclass:: apexrl.models.mlp.MLPActor
    :members:

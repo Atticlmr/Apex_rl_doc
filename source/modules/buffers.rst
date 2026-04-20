@@ -22,6 +22,7 @@ Key Features
 
 - Efficient tensor storage on GPU
 - Support for multi-dimensional observations
+- Support for both scalar discrete and multi-dimensional continuous actions
 - Generalized Advantage Estimation (GAE)
 - Privileged observations for asymmetric actor-critic
 
@@ -36,6 +37,8 @@ Basic Usage
        num_envs=4096,
        num_steps=24,
        obs_shape=(48,),
+       action_shape=(12,),
+       action_dtype=torch.float32,
        device="cuda",
        num_privileged_obs=0,
    )
@@ -109,6 +112,9 @@ Stored tensors have shape ``(num_steps, num_envs, ...)``:
 
    # Observations: (num_steps, num_envs, *obs_shape)
    self.observations  # Shape: (24, 4096, 48)
+
+   # Continuous actions: (num_steps, num_envs, *action_shape)
+   self.actions       # Shape: (24, 4096, 12)
    
    # Scalars: (num_steps, num_envs)
    self.rewards       # Shape: (24, 4096)
@@ -147,6 +153,9 @@ where :math:`\delta_t = r_t + \gamma V(s_{t+1}) - V(s_t)` is the TD error.
        
        self.advantages = advantages
        self.returns = advantages + self.values
+
+Timeout bootstrapping is handled before transitions are written into the buffer,
+so ``dones`` in the stored rollout reflect the bootstrap mask used by PPO.
 
 ReplayBuffer
 ------------

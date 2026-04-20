@@ -90,7 +90,7 @@ GymVecEnv
 GymVecEnvContinuous
 ~~~~~~~~~~~~~~~~~~~
 
-用于连续动作空间，自动动作缩放：
+用于连续动作空间，自动裁剪并缩放到动作边界：
 
 .. code-block:: python
 
@@ -101,6 +101,10 @@ GymVecEnvContinuous
        device="cpu",
        clip_actions=True,  # 裁剪到动作空间边界
    )
+
+这是 Gymnasium ``Box`` 动作空间上运行 PPO 的推荐包装器。当前连续动作 PPO
+默认使用未经过 ``tanh`` 压缩的高斯策略（``use_tanh_squash=False``），
+由该包装器负责处理动作边界。
 
 API 参考
 ~~~~~~~~
@@ -188,7 +192,10 @@ Isaac Gym / Isaac Lab
            self.reset_buf[:] = terminated | truncated
            
            extras = {
-               "time_outs": truncated,
+               "time_outs": truncated,  # 向后兼容别名
+               "terminated": terminated,
+               "truncated": truncated,
+               "final_observation": obs_dict["policy"].clone(),
                "log": info.get("log", {}),
            }
            
@@ -235,7 +242,13 @@ Brax (JAX)
            reward = torch.from_numpy(np.array(self._state.reward)).to(self.device)
            done = torch.from_numpy(np.array(self._state.done)).to(self.device)
            
-           extras = {"time_outs": torch.zeros_like(done), "log": {}}
+           extras = {
+               "time_outs": torch.zeros_like(done),
+               "terminated": done,
+               "truncated": torch.zeros_like(done),
+               "final_observation": obs.clone(),
+               "log": {},
+           }
            
            return obs, reward, done, extras
 
@@ -244,9 +257,10 @@ Brax (JAX)
 
 1. **预分配缓冲区**：在 ``__init__`` 中分配观测/奖励缓冲区
 2. **使用 ``reset_idx``**：实现部分重置以提高效率
-3. **处理超时**：正确设置 ``extras["time_outs"]``
-4. **设备一致性**：确保所有张量在同一设备上
-5. **日志记录**：添加有用的指标到 ``extras["log"]``
+3. **处理回合结束语义**：分别返回 ``terminated`` 和 ``truncated``
+4. **提供最终状态**：对截断回合设置 ``extras["final_observation"]``
+5. **设备一致性**：确保所有张量在同一设备上
+6. **日志记录**：添加有用的指标到 ``extras["log"]``
 
 另请参阅
 --------

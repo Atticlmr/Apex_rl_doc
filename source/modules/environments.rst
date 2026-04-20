@@ -90,7 +90,7 @@ Wraps multiple Gymnasium environments:
 GymVecEnvContinuous
 ~~~~~~~~~~~~~~~~~~~
 
-For continuous action spaces with automatic action scaling:
+For continuous action spaces with automatic clipping and action-space scaling:
 
 .. code-block:: python
 
@@ -101,6 +101,10 @@ For continuous action spaces with automatic action scaling:
        device="cpu",
        clip_actions=True,  # Clip to action space bounds
    )
+
+This is the recommended wrapper for PPO on Gymnasium ``Box`` action spaces.
+The default continuous PPO policy is an unsquashed Gaussian
+(``use_tanh_squash=False``), and the wrapper handles action bounds.
 
 API Reference
 ~~~~~~~~~~~~~
@@ -188,7 +192,10 @@ Example integration pattern:
            self.reset_buf[:] = terminated | truncated
            
            extras = {
-               "time_outs": truncated,
+               "time_outs": truncated,  # Backward-compatible alias
+               "terminated": terminated,
+               "truncated": truncated,
+               "final_observation": obs_dict["policy"].clone(),
                "log": info.get("log", {}),
            }
            
@@ -235,7 +242,13 @@ For JAX-based environments:
            reward = torch.from_numpy(np.array(self._state.reward)).to(self.device)
            done = torch.from_numpy(np.array(self._state.done)).to(self.device)
            
-           extras = {"time_outs": torch.zeros_like(done), "log": {}}
+           extras = {
+               "time_outs": torch.zeros_like(done),
+               "terminated": done,
+               "truncated": torch.zeros_like(done),
+               "final_observation": obs.clone(),
+               "log": {},
+           }
            
            return obs, reward, done, extras
 
@@ -244,9 +257,10 @@ Best Practices
 
 1. **Pre-allocate Buffers**: Allocate observation/reward buffers in ``__init__``
 2. **Use ``reset_idx``**: Implement partial reset for efficiency
-3. **Handle Timeouts**: Set ``extras["time_outs"]`` correctly
-4. **Device Consistency**: Ensure all tensors on same device
-5. **Logging**: Add useful metrics to ``extras["log"]``
+3. **Handle Episode End Semantics**: Return ``terminated`` and ``truncated``
+4. **Provide Final State**: Set ``extras["final_observation"]`` for truncated episodes
+5. **Device Consistency**: Ensure all tensors on same device
+6. **Logging**: Add useful metrics to ``extras["log"]``
 
 See Also
 --------

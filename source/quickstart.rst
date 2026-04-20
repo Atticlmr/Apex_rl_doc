@@ -39,16 +39,17 @@ Here's a minimal example to train a PPO agent on a Gymnasium environment:
 
    import gymnasium as gym
    from apexrl.agent.on_policy_runner import OnPolicyRunner
-   from apexrl.envs.gym_wrapper import GymVecEnv
+   from apexrl.envs.gym_wrapper import GymVecEnvContinuous
    from apexrl.models.mlp import MLPActor, MLPCritic
 
    # Create vectorized environment
    def make_env():
        return gym.make("Pendulum-v1")
 
-   env = GymVecEnv([make_env for _ in range(8)], device="cpu")
+   env = GymVecEnvContinuous([make_env for _ in range(8)], device="cpu")
 
    # Create runner with default PPO configuration
+   # OnPolicyRunner is the canonical training entrypoint for PPO.
    runner = OnPolicyRunner(
        env=env,
        algorithm="ppo",
@@ -103,6 +104,10 @@ You can easily define custom Actor and Critic networks:
        critic_class=MLPCritic,
        # ... other args
    )
+
+Continuous-action PPO defaults to an unsquashed Gaussian policy
+(``use_tanh_squash=False``). ``GymVecEnvContinuous`` handles clipping and scaling
+to the Gymnasium action space, which is the recommended default setup.
 
 Next Steps
 ----------

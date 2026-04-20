@@ -37,6 +37,7 @@ Key Features
 - Clipped surrogate objective for stable updates
 - Generalized Advantage Estimation (GAE)
 - Support for both continuous and discrete actions
+- Correct timeout bootstrapping with ``terminated`` / ``truncated`` semantics
 - Asymmetric actor-critic (privileged information for critic)
 - Separate or joint policy/value optimizers
 
@@ -71,7 +72,11 @@ Basic Usage
    )
 
    # Train
+   # PPO.learn() is a thin convenience wrapper around OnPolicyRunner.
    agent.learn(total_timesteps=10_000_000)
+
+For new projects, prefer ``OnPolicyRunner`` as the primary training entrypoint
+and treat ``PPO`` as the algorithm implementation plugged into that runner.
 
 Configuration
 ~~~~~~~~~~~~~
@@ -202,6 +207,10 @@ Environment-Specific Recommendations
        clip_range=0.2,
        ent_coef=0.0,
    )
+
+For continuous control tasks, the default PPO configuration uses
+``use_tanh_squash=False`` and clamps learned log standard deviations with
+``min_log_std`` / ``max_log_std`` to keep the policy numerically stable.
 
 Advanced Features
 -----------------

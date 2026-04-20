@@ -42,7 +42,6 @@ Gymnasium 包装器
 
    import torch
    from typing import Dict, Tuple, Union
-   from tensordict import TensorDict
    from apexrl.envs.vecenv import VecEnv
 
    class MyCustomVecEnv(VecEnv):
@@ -121,15 +120,20 @@ Gymnasium 包装器
            
            # 检查终止
            self.episode_length_buf += 1
-           time_outs = self.episode_length_buf >= self.max_episode_length
-           self.reset_buf = time_outs.clone()  # 或添加其他终止条件
+           terminated = torch.zeros_like(self.reset_buf)
+           truncated = self.episode_length_buf >= self.max_episode_length
+           self.reset_buf = terminated | truncated
+           final_obs = self.obs_buf.clone()
            
-           # 重置超时的环境
-           if time_outs.any():
-               self.reset_idx(torch.where(time_outs)[0])
+           # 重置已结束的环境
+           if self.reset_buf.any():
+               self.reset_idx(torch.where(self.reset_buf)[0])
            
            extras = {
-               "time_outs": time_outs,
+               "time_outs": truncated,  # 向后兼容别名
+               "terminated": terminated,
+               "truncated": truncated,
+               "final_observation": final_obs,
                "log": {
                    "/reward/mean": self.rew_buf.mean().item(),
                    "/episode_length/mean": self.episode_length_buf.float().mean().item(),
@@ -255,7 +259,13 @@ Isaac Gym 集成示例：
            if self.reset_buf.any():
                self.reset_idx(torch.where(self.reset_buf)[0])
            
-           extras = {"time_outs": self.reset_buf.clone(), "log": {}}
+           extras = {
+               "time_outs": self.reset_buf.clone(),
+               "terminated": torch.zeros_like(self.reset_buf),
+               "truncated": self.reset_buf.clone(),
+               "final_observation": self.obs_buf.clone(),
+               "log": {},
+           }
            return self.obs_buf, self.rew_buf, self.reset_buf, extras
 
 最佳实践
@@ -263,9 +273,10 @@ Isaac Gym 集成示例：
 
 1. **预分配缓冲区**：在 ``__init__`` 中分配观测/奖励缓冲区
 2. **使用 ``reset_idx``**：实现部分重置以提高效率
-3. **处理超时**：正确设置 ``extras["time_outs"]``
-4. **设备一致性**：确保所有张量在同一设备上
-5. **日志记录**：添加有用的指标到 ``extras["log"]``
+3. **处理回合结束语义**：分别返回 ``terminated`` 和 ``truncated``
+4. **提供最终状态**：对截断回合设置 ``extras["final_observation"]``
+5. **设备一致性**：确保所有张量在同一设备上
+6. **日志记录**：添加有用的指标到 ``extras["log"]``
 
 另请参阅
 --------
