@@ -32,6 +32,8 @@ Quick Links
 
 * :doc:`quickstart` - Get started in 5 minutes
 * :doc:`tutorials/first_agent` - Create your first RL agent
+* :doc:`tutorials/train_ppo` - Train PPO step by step
+* :doc:`tutorials/train_dqn` - Train DQN step by step
 * :doc:`API/modules` - API reference
 
 .. toctree::
@@ -46,6 +48,8 @@ Quick Links
    :caption: Tutorials
 
    tutorials/first_agent
+   tutorials/train_ppo
+   tutorials/train_dqn
    tutorials/custom_environment
    tutorials/custom_network
 
