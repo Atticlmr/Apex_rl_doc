@@ -6,7 +6,7 @@ ApexRL 文档
 
 **ApexRL** 是一个模块化的强化学习库，专为高性能 RL 研究和应用而设计。它提供了简洁、可扩展的架构，针对 GPU 加速环境（如 Isaac Gym 和 Isaac Sim）进行了优化。
 
-.. image:: https://img.shields.io/badge/version-0.0.1-blue.svg
+.. image:: https://img.shields.io/badge/version-0.1.0-blue.svg
    :target: https://github.com/Atticlmr/Apex_rl
    :alt: 版本
 
