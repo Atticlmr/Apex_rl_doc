@@ -13,8 +13,8 @@ sys.path.insert(0, os.path.abspath('../../src'))
 project = 'ApexRL'
 copyright = '2026, Atticlmr'
 author = 'Atticlmr'
-release = '0.0.1'
-version = '0.0.1'
+release = '0.1.0'
+version = '0.1.0'
 
 # -- General configuration ---------------------------------------------------
 extensions = [
@@ -65,6 +65,9 @@ html_favicon = '_static/favicon.ico'
 html_theme_options = {
     "sidebar_hide_name": False,
     "navigation_with_keys": True,
+    "source_repository": "https://github.com/Atticlmr/Apex_rl/",
+    "source_branch": "main",
+    "source_directory": "docs/source/",
     "light_css_variables": {
         "color-brand-primary": "#2563eb",
         "color-brand-content": "#2563eb",
