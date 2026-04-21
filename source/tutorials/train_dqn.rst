@@ -140,5 +140,6 @@ Next Steps
 ----------
 
 - Read :doc:`train_ppo` for the on-policy training flow
+- Read :doc:`train_sac` for continuous-control off-policy training
 - Read :doc:`../modules/algorithms` for DQN-specific options
 - Read :doc:`../modules/runners` for runner API details

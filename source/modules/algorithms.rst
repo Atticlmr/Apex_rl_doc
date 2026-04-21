@@ -23,7 +23,7 @@ Available Algorithms
      - Deep Q-Network
    * - SAC
      - Off-policy
-     - 🚧 Planned
+     - ✅ Available
      - Soft Actor-Critic
 
 PPO (Proximal Policy Optimization)
@@ -364,3 +364,128 @@ Included off-policy smoke tasks:
 - ``CartPole-v1 (Dueling DQN)``
 - ``Acrobot-v1 (DQN)``
 - ``Acrobot-v1 (Dueling DQN)``
+- ``Pendulum-v1 (SAC)``
+- ``MountainCarContinuous-v0 (SAC)``
+
+SAC (Soft Actor-Critic)
+-----------------------
+
+SAC is available for continuous-control environments through
+``ReplayBuffer``, ``OffPolicyRunner``, a squashed Gaussian actor, and
+twin ``Q(s, a)`` critics.
+
+Key Features
+~~~~~~~~~~~~
+
+- Off-policy continuous control with replay reuse
+- Squashed Gaussian actor with action-bound rescaling
+- Twin critics and target critics
+- Automatic entropy-temperature tuning
+- Shared ``OffPolicyRunner`` training entrypoint
+
+Basic Usage
+~~~~~~~~~~~
+
+.. code-block:: python
+
+   import torch
+   from gymnasium import make
+
+   from apexrl.agent.off_policy_runner import OffPolicyRunner
+   from apexrl.algorithms.sac import SACConfig
+   from apexrl.envs.gym_wrapper import GymVecEnvContinuous
+
+   env = GymVecEnvContinuous(
+       [lambda: make("Pendulum-v1") for _ in range(2)],
+       device="cpu",
+   )
+
+   cfg = SACConfig(
+       batch_size=256,
+       buffer_size=100_000,
+       learning_starts=5_000,
+       actor_learning_rate=3e-4,
+       critic_learning_rate=3e-4,
+       alpha_learning_rate=3e-4,
+       tau=0.005,
+   )
+
+   runner = OffPolicyRunner(
+       env=env,
+       cfg=cfg,
+       algorithm="sac",
+       device=torch.device("cpu"),
+   )
+   runner.learn(total_timesteps=200_000)
+
+``SAC.learn()`` is also available as a convenience wrapper, but
+``OffPolicyRunner`` remains the canonical training entrypoint.
+
+Configuration
+~~~~~~~~~~~~~
+
+.. autoclass:: apexrl.algorithms.sac.config.SACConfig
+   :members:
+   :undoc-members:
+   :noindex:
+
+API Reference
+~~~~~~~~~~~~~
+
+.. autoclass:: apexrl.algorithms.sac.sac.SAC
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
+Algorithm Details
+~~~~~~~~~~~~~~~~~
+
+SAC critic target:
+
+.. math::
+
+   y = r + \gamma (1-d)\left(\min(Q_1'(s', a'), Q_2'(s', a')) - \alpha \log \pi(a'|s')\right)
+
+Twin critic losses:
+
+.. math::
+
+   L_{Q_i} = \mathbb{E}\left[(Q_i(s, a) - y)^2\right]
+
+Actor loss:
+
+.. math::
+
+   L_{\pi} = \mathbb{E}\left[\alpha \log \pi(a|s) - \min(Q_1(s, a), Q_2(s, a))\right]
+
+Temperature loss:
+
+.. math::
+
+   L_{\alpha} = -\mathbb{E}\left[\log \alpha \cdot (\log \pi(a|s) + \mathcal{H}_{target})\right]
+
+Implementation Notes
+~~~~~~~~~~~~~~~~~~~~
+
+- The default actor is ``MLPSquashedGaussianActor``.
+- The default critics are twin ``MLPContinuousQNetwork`` instances.
+- ``ReplayBuffer`` stores continuous vector actions by setting
+  ``action_shape=env.action_space.shape``.
+- Bootstrap masking follows Gymnasium semantics: true terminals stop
+  bootstrapping; truncation should preserve the final observation for
+  value estimation.
+
+Smoke Benchmarks
+~~~~~~~~~~~~~~~~
+
+The benchmark script includes lightweight SAC smoke tasks:
+
+.. code-block:: bash
+
+   python benchmarks/run_smoke_benchmarks.py --iterations 1 --num-envs 1
+
+Included SAC smoke tasks:
+
+- ``Pendulum-v1 (SAC)``
+- ``MountainCarContinuous-v0 (SAC)``

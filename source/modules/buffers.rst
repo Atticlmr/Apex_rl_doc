@@ -9,7 +9,7 @@ Overview
 Available buffer types:
 
 1. **RolloutBuffer** - On-policy data storage (PPO)
-2. **ReplayBuffer** - Off-policy data storage (DQN)
+2. **ReplayBuffer** - Off-policy data storage (DQN, SAC)
 3. **DistillationBuffer** - Policy distillation data
 
 RolloutBuffer
@@ -161,7 +161,7 @@ so ``dones`` in the stored rollout reflect the bootstrap mask used by PPO.
 ReplayBuffer
 ------------
 
-For off-policy algorithms such as DQN:
+For off-policy algorithms such as DQN and SAC:
 
 .. code-block:: python
 
@@ -180,9 +180,9 @@ For off-policy algorithms such as DQN:
    # Sample batch
    batch = buffer.sample(batch_size=256)
 
-For discrete-action DQN, ``action_shape=()`` stores scalar action indices. The
-same buffer also supports vector actions for future off-policy continuous-control
-algorithms by setting ``action_shape`` explicitly.
+For discrete-action DQN, ``action_shape=()`` stores scalar action indices.
+For SAC and other continuous-control off-policy algorithms, set
+``action_shape`` to the vector action shape so replay stores full actions.
 
 API Reference
 ~~~~~~~~~~~~~

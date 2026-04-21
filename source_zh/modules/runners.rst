@@ -12,7 +12,7 @@ Runner 模块为以下功能提供高级接口：
 2. **日志记录** - TensorBoard 集成
 3. **检查点保存** - 模型保存和加载
 4. **评估** - 定期智能体评估
-5. **同策略 / 异策略入口** - PPO 和 DQN 风格训练
+5. **同策略 / 异策略入口** - PPO、DQN 和 SAC 风格训练
 
 OnPolicyRunner
 --------------
@@ -284,14 +284,14 @@ Runner 自动：
 OffPolicyRunner
 ---------------
 
-``OffPolicyRunner`` 是 DQN 等异策略算法的标准训练入口。它负责环境交互、
-经验回放写入、epsilon-greedy 探索以及定期梯度更新。
+``OffPolicyRunner`` 是 DQN、SAC 等异策略算法的标准训练入口。它负责环境交互、
+经验回放写入和定期梯度更新，具体探索语义由算法自身决定。
 
 关键特性
 ~~~~~~~~
 
 - 基于 replay buffer 的训练循环
-- epsilon-greedy 探索调度
+- 算法自定义的探索处理
 - 由算法对象控制 target network 更新
 - 统一的日志、检查点和评估流程
 
@@ -357,3 +357,10 @@ API 参考
 - ``train/td_target_mean`` - TD target 平均值
 - ``exploration/epsilon`` - 当前 epsilon
 - ``buffer/size`` - replay buffer 大小
+
+SAC 还会额外记录：
+
+- ``train/actor_loss`` - 策略目标
+- ``train/critic1_loss`` / ``train/critic2_loss`` - twin critic 损失
+- ``train/alpha`` - 当前熵温度
+- ``train/entropy`` - 策略熵代理指标

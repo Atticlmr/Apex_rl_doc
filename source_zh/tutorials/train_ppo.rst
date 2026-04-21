@@ -138,5 +138,6 @@
 ------
 
 - 阅读 :doc:`train_dqn` 了解异策略训练流程
+- 阅读 :doc:`train_sac` 了解连续控制异策略训练流程
 - 阅读 :doc:`custom_network` 了解自定义网络
 - 阅读 :doc:`../modules/runners` 查看 runner API 细节

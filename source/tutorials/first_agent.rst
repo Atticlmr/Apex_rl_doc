@@ -188,6 +188,7 @@ Next Steps
 
 - Follow :doc:`train_ppo` for a dedicated PPO tutorial
 - Follow :doc:`train_dqn` for a dedicated DQN tutorial
+- Follow :doc:`train_sac` for a dedicated SAC tutorial
 - Learn to create :doc:`custom_environment`
 - Explore :doc:`custom_network` architectures
 - Read about advanced :doc:`../modules/algorithms` features

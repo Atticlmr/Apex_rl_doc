@@ -115,6 +115,7 @@ Next Steps
 - Learn about :doc:`tutorials/first_agent` for a detailed walkthrough
 - Read :doc:`tutorials/train_ppo` for the standard PPO training flow
 - Read :doc:`tutorials/train_dqn` for the standard DQN training flow
+- Read :doc:`tutorials/train_sac` for the continuous-control off-policy flow
 - Explore :doc:`modules/algorithms` to understand available algorithms
 - Check :doc:`modules/environments` for environment integration
 - Read :doc:`tutorials/custom_network` for advanced network architectures

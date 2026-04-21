@@ -23,7 +23,7 @@ ApexRL 提供最先进的强化学习算法实现。
      - 深度 Q 网络
    * - SAC
      - 异策略
-     - 🚧 计划中
+     - ✅ 可用
      - 软 Actor-Critic
 
 PPO（近端策略优化）
@@ -364,3 +364,124 @@ benchmark 脚本已包含 DQN 和 Dueling DQN 的轻量任务：
 - ``CartPole-v1 (Dueling DQN)``
 - ``Acrobot-v1 (DQN)``
 - ``Acrobot-v1 (Dueling DQN)``
+- ``Pendulum-v1 (SAC)``
+- ``MountainCarContinuous-v0 (SAC)``
+
+SAC（Soft Actor-Critic）
+------------------------
+
+SAC 已可用于连续控制环境，核心组件包括 ``ReplayBuffer``、
+``OffPolicyRunner``、squashed Gaussian actor 和 twin ``Q(s, a)`` critics。
+
+关键特性
+~~~~~~~~
+
+- 基于 replay reuse 的连续控制异策略训练
+- 带动作边界映射的 squashed Gaussian actor
+- twin critics 和 target critics
+- 自动熵温度调节
+- 复用统一的 ``OffPolicyRunner`` 训练入口
+
+基本用法
+~~~~~~~~
+
+.. code-block:: python
+
+   import torch
+   from gymnasium import make
+
+   from apexrl.agent.off_policy_runner import OffPolicyRunner
+   from apexrl.algorithms.sac import SACConfig
+   from apexrl.envs.gym_wrapper import GymVecEnvContinuous
+
+   env = GymVecEnvContinuous(
+       [lambda: make("Pendulum-v1") for _ in range(2)],
+       device="cpu",
+   )
+
+   cfg = SACConfig(
+       batch_size=256,
+       buffer_size=100_000,
+       learning_starts=5_000,
+       actor_learning_rate=3e-4,
+       critic_learning_rate=3e-4,
+       alpha_learning_rate=3e-4,
+       tau=0.005,
+   )
+
+   runner = OffPolicyRunner(
+       env=env,
+       cfg=cfg,
+       algorithm="sac",
+       device=torch.device("cpu"),
+   )
+   runner.learn(total_timesteps=200_000)
+
+``SAC.learn()`` 也可以直接使用，但 ``OffPolicyRunner`` 仍然是标准训练入口。
+
+配置
+~~~~
+
+.. autoclass:: apexrl.algorithms.sac.config.SACConfig
+   :members:
+   :undoc-members:
+   :noindex:
+
+API 参考
+~~~~~~~~
+
+.. autoclass:: apexrl.algorithms.sac.sac.SAC
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
+算法细节
+~~~~~~~~
+
+SAC critic target：
+
+.. math::
+
+   y = r + \gamma (1-d)\left(\min(Q_1'(s', a'), Q_2'(s', a')) - \alpha \log \pi(a'|s')\right)
+
+twin critic 损失：
+
+.. math::
+
+   L_{Q_i} = \mathbb{E}\left[(Q_i(s, a) - y)^2\right]
+
+actor 损失：
+
+.. math::
+
+   L_{\pi} = \mathbb{E}\left[\alpha \log \pi(a|s) - \min(Q_1(s, a), Q_2(s, a))\right]
+
+温度损失：
+
+.. math::
+
+   L_{\alpha} = -\mathbb{E}\left[\log \alpha \cdot (\log \pi(a|s) + \mathcal{H}_{target})\right]
+
+实现说明
+~~~~~~~~
+
+- 默认 actor 是 ``MLPSquashedGaussianActor``。
+- 默认 critics 是两个 ``MLPContinuousQNetwork``。
+- ``ReplayBuffer`` 通过 ``action_shape=env.action_space.shape`` 存储连续动作向量。
+- bootstrap mask 遵循 Gymnasium 语义：真实终止停止 bootstrap，截断回合则保留
+  ``final_observation`` 用于后续估值。
+
+Smoke Benchmark
+~~~~~~~~~~~~~~~
+
+benchmark 脚本已包含 SAC 的轻量任务：
+
+.. code-block:: bash
+
+   python benchmarks/run_smoke_benchmarks.py --iterations 1 --num-envs 1
+
+当前 SAC smoke 任务：
+
+- ``Pendulum-v1 (SAC)``
+- ``MountainCarContinuous-v0 (SAC)``

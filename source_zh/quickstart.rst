@@ -115,6 +115,7 @@
 - 阅读 :doc:`tutorials/first_agent` 了解详细教程
 - 阅读 :doc:`tutorials/train_ppo` 了解标准 PPO 训练流程
 - 阅读 :doc:`tutorials/train_dqn` 了解标准 DQN 训练流程
+- 阅读 :doc:`tutorials/train_sac` 了解连续控制异策略训练流程
 - 探索 :doc:`modules/algorithms` 了解可用算法
 - 查看 :doc:`modules/environments` 了解环境集成
 - 阅读 :doc:`tutorials/custom_network` 了解高级网络架构

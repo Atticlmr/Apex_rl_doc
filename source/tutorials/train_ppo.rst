@@ -138,5 +138,6 @@ Next Steps
 ----------
 
 - Read :doc:`train_dqn` for the off-policy training flow
+- Read :doc:`train_sac` for the continuous-control off-policy flow
 - Read :doc:`custom_network` for custom model architectures
 - Read :doc:`../modules/runners` for the runner API details

@@ -140,5 +140,6 @@ DQN 推荐先从 ``CartPole-v1`` 这类离散动作任务开始。
 ------
 
 - 阅读 :doc:`train_ppo` 了解同策略训练流程
+- 阅读 :doc:`train_sac` 了解连续控制异策略训练流程
 - 阅读 :doc:`../modules/algorithms` 查看 DQN 相关配置
 - 阅读 :doc:`../modules/runners` 查看 runner API 细节

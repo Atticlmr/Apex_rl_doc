@@ -34,6 +34,7 @@ ApexRL 文档
 * :doc:`tutorials/first_agent` - 创建您的第一个 RL 智能体
 * :doc:`tutorials/train_ppo` - 分步骤训练 PPO
 * :doc:`tutorials/train_dqn` - 分步骤训练 DQN
+* :doc:`tutorials/train_sac` - 分步骤训练 SAC
 * :doc:`API/modules` - API 参考
 
 .. toctree::
@@ -50,6 +51,7 @@ ApexRL 文档
    tutorials/first_agent
    tutorials/train_ppo
    tutorials/train_dqn
+   tutorials/train_sac
    tutorials/custom_environment
    tutorials/custom_network
 

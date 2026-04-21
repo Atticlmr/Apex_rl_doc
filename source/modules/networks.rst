@@ -11,6 +11,7 @@ The network module is organized into:
 1. **Base Classes** - Abstract interfaces for Actor and Critic
 2. **MLP Implementations** - Multi-layer perceptron networks
 3. **CNN Implementations** - Convolutional networks for vision
+4. **Continuous Q Networks** - ``Q(s, a)`` critics for SAC-style algorithms
 
 Base Classes
 ------------
@@ -64,6 +65,11 @@ For PPO, the default recommendation is an unsquashed Gaussian policy
 aligned with the policy distribution, while environment wrappers such as
 ``GymVecEnvContinuous`` handle clipping and scaling to action bounds.
 
+For SAC, the default recommendation is a squashed Gaussian policy with
+state-dependent ``mean`` and ``log_std`` heads. Actions are sampled in the
+unconstrained space, pushed through ``tanh``, and then affine-scaled to the
+Gymnasium action bounds.
+
 .. autoclass:: apexrl.models.base.ContinuousActor
    :members:
    :undoc-members:
@@ -115,6 +121,17 @@ For value function estimation:
    :show-inheritance:
    :noindex:
 
+ContinuousQNetwork
+~~~~~~~~~~~~~~~~~~
+
+For continuous-control critics of the form ``Q(s, a)``:
+
+.. autoclass:: apexrl.models.base.ContinuousQNetwork
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
 MLP Networks
 ------------
 
@@ -155,6 +172,36 @@ output layers use gain 1.0.
    :show-inheritance:
    :noindex:
 
+MLPSquashedGaussianActor
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+SAC's default continuous-control actor:
+
+.. code-block:: python
+
+   from apexrl.models.mlp import MLPSquashedGaussianActor
+
+   actor = MLPSquashedGaussianActor(
+       obs_space=obs_space,
+       action_space=action_space,
+       cfg={
+           "hidden_dims": [256, 256],
+           "activation": "relu",
+           "min_log_std": -20.0,
+           "max_log_std": 2.0,
+       }
+   )
+
+This actor predicts state-dependent Gaussian parameters, applies ``tanh``
+squashing, and rescales actions to the environment bounds. It is intended for
+SAC rather than PPO.
+
+.. autoclass:: apexrl.models.mlp.MLPSquashedGaussianActor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
 MLPCritic
 ~~~~~~~~~
 
@@ -174,6 +221,17 @@ Multi-layer perceptron critic:
    )
 
 .. autoclass:: apexrl.models.mlp.MLPCritic
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
+MLPContinuousQNetwork
+~~~~~~~~~~~~~~~~~~~~~
+
+Continuous-action critic used by SAC:
+
+.. autoclass:: apexrl.models.mlp.MLPContinuousQNetwork
    :members:
    :undoc-members:
    :show-inheritance:

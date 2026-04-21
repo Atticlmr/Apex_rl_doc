@@ -188,6 +188,7 @@ ApexRL 使用向量化环境进行并行训练。让我们创建 8 个并行的 
 
 - 阅读 :doc:`train_ppo` 查看专门的 PPO 教程
 - 阅读 :doc:`train_dqn` 查看专门的 DQN 教程
+- 阅读 :doc:`train_sac` 查看专门的 SAC 教程
 - 学习创建 :doc:`custom_environment`
 - 探索 :doc:`custom_network` 架构
 - 阅读 :doc:`../modules/algorithms` 了解高级功能

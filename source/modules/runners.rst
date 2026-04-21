@@ -12,7 +12,7 @@ The runner module provides high-level interfaces for:
 2. **Logging** - TensorBoard integration
 3. **Checkpointing** - Model saving and loading
 4. **Evaluation** - Periodic agent evaluation
-5. **On-policy and Off-policy Entry Points** - PPO and DQN-style workflows
+5. **On-policy and Off-policy Entry Points** - PPO, DQN, and SAC workflows
 
 OnPolicyRunner
 --------------
@@ -286,14 +286,15 @@ OffPolicyRunner
 ---------------
 
 The ``OffPolicyRunner`` is the canonical training entrypoint for off-policy
-algorithms such as DQN. It owns environment interaction, replay insertion,
-epsilon-greedy exploration, and scheduled gradient updates.
+algorithms such as DQN and SAC. It owns environment interaction, replay
+insertion, and scheduled gradient updates, while exploration semantics stay
+inside the algorithm implementation.
 
 Key Features
 ~~~~~~~~~~~~
 
 - Replay-buffer-driven training loop
-- Epsilon-greedy exploration scheduling
+- Algorithm-specific exploration handling
 - Periodic target-network updates via the algorithm
 - Unified logging, checkpointing, and evaluation
 
@@ -359,3 +360,10 @@ Common DQN metrics:
 - ``train/td_target_mean`` - Mean TD target
 - ``exploration/epsilon`` - Current epsilon
 - ``buffer/size`` - Replay buffer size
+
+Common SAC metrics add:
+
+- ``train/actor_loss`` - Policy objective
+- ``train/critic1_loss`` / ``train/critic2_loss`` - Twin critic losses
+- ``train/alpha`` - Current entropy temperature
+- ``train/entropy`` - Mean policy entropy proxy

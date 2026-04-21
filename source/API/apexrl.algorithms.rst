@@ -8,6 +8,8 @@ Subpackages
    :maxdepth: 4
 
    apexrl.algorithms.ppo
+   apexrl.algorithms.sac
+   apexrl.algorithms.sac
 
 Module contents
 ---------------

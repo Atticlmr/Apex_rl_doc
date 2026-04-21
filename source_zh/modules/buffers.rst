@@ -9,7 +9,7 @@ ApexRL 提供高效的缓冲区实现，用于存储和处理训练数据。
 可用的缓冲区类型：
 
 1. **RolloutBuffer** - 同策略数据存储（PPO）
-2. **ReplayBuffer** - 异策略数据存储（DQN）
+2. **ReplayBuffer** - 异策略数据存储（DQN、SAC）
 3. **DistillationBuffer** - 策略蒸馏数据
 
 RolloutBuffer
@@ -161,7 +161,7 @@ timeout bootstrap 会在写入缓冲区前完成，因此缓冲区中的 ``dones
 ReplayBuffer
 ------------
 
-用于 DQN 等异策略算法：
+用于 DQN、SAC 等异策略算法：
 
 .. code-block:: python
 
@@ -180,8 +180,9 @@ ReplayBuffer
    # 采样批次
    batch = buffer.sample(batch_size=256)
 
-对于离散动作 DQN，``action_shape=()`` 用于存储标量动作索引。未来如果加入
-连续动作的异策略算法，也可以通过显式设置 ``action_shape`` 来复用这套 buffer。
+对于离散动作 DQN，``action_shape=()`` 用于存储标量动作索引。
+对于 SAC 这类连续动作异策略算法，``action_shape`` 应设置为动作向量形状，
+这样 replay 才会保存完整连续动作。
 
 API 参考
 ~~~~~~~~

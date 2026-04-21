@@ -11,6 +11,7 @@ ApexRL 为定义自定义神经网络架构提供了灵活的基类。
 1. **基类** - Actor 和 Critic 的抽象接口
 2. **MLP 实现** - 多层感知机网络
 3. **CNN 实现** - 用于视觉的卷积网络
+4. **连续动作 Q 网络** - 面向 SAC 的 ``Q(s, a)`` critic
 
 基类
 ----
@@ -63,6 +64,10 @@ ContinuousActor
 （``use_tanh_squash=False``）。这样策略分布、log-prob 和 entropy
 语义保持一致，再由 ``GymVecEnvContinuous`` 之类的环境包装器负责裁剪和缩放。
 
+对于 SAC，默认推荐使用 squashed Gaussian 策略。它会根据状态输出
+``mean`` 和 ``log_std``，先在无界空间采样，再经过 ``tanh`` 压缩，
+最后线性映射到 Gymnasium 动作边界。
+
 .. autoclass:: apexrl.models.base.ContinuousActor
    :members:
    :undoc-members:
@@ -114,6 +119,17 @@ Critic
    :show-inheritance:
    :noindex:
 
+ContinuousQNetwork
+~~~~~~~~~~~~~~~~~~
+
+用于 ``Q(s, a)`` 形式的连续动作 critic：
+
+.. autoclass:: apexrl.models.base.ContinuousQNetwork
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
 MLP 网络
 --------
 
@@ -153,6 +169,35 @@ MLPActor
    :show-inheritance:
    :noindex:
 
+MLPSquashedGaussianActor
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+SAC 默认连续动作策略：
+
+.. code-block:: python
+
+   from apexrl.models.mlp import MLPSquashedGaussianActor
+
+   actor = MLPSquashedGaussianActor(
+       obs_space=obs_space,
+       action_space=action_space,
+       cfg={
+           "hidden_dims": [256, 256],
+           "activation": "relu",
+           "min_log_std": -20.0,
+           "max_log_std": 2.0,
+       }
+   )
+
+这个 actor 会输出状态相关的高斯分布参数，执行 ``tanh`` 压缩，
+并把动作映射到环境动作边界。它是给 SAC 用的，不是给 PPO 用的。
+
+.. autoclass:: apexrl.models.mlp.MLPSquashedGaussianActor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
 MLPCritic
 ~~~~~~~~~
 
@@ -172,6 +217,17 @@ MLPCritic
    )
 
 .. autoclass:: apexrl.models.mlp.MLPCritic
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
+MLPContinuousQNetwork
+~~~~~~~~~~~~~~~~~~~~~
+
+SAC 使用的连续动作 critic：
+
+.. autoclass:: apexrl.models.mlp.MLPContinuousQNetwork
    :members:
    :undoc-members:
    :show-inheritance:
