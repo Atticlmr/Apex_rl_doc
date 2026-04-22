@@ -9,7 +9,7 @@ Overview
 The runner module provides high-level interfaces for:
 
 1. **Training Management** - Automated training loops
-2. **Logging** - TensorBoard integration
+2. **Logging** - TensorBoard, wandb, and SwanLab integration
 3. **Checkpointing** - Model saving and loading
 4. **Evaluation** - Periodic agent evaluation
 5. **On-policy and Off-policy Entry Points** - PPO, DQN, and SAC workflows
@@ -25,7 +25,7 @@ Key Features
 ~~~~~~~~~~~~
 
 - Automated training loop with callbacks
-- TensorBoard logging of metrics
+- TensorBoard / wandb / SwanLab logging of metrics
 - Periodic checkpoint saving
 - Reward component tracking
 - Environment metrics logging
@@ -70,7 +70,7 @@ Configuration
        critic_class=MLPCritic,           # Critic network class
        actor_cfg={"hidden_dims": [256]}, # Actor network config
        critic_cfg={"hidden_dims": [256]}, # Critic network config
-       log_dir="./logs",                 # TensorBoard log directory
+       log_dir="./logs",                 # Log directory used by the selected backend(s)
        save_dir="./checkpoints",         # Checkpoint directory
        device=torch.device("cuda"),      # Training device
        log_interval=10,                  # Log every N iterations
@@ -144,7 +144,7 @@ Available events:
 Logging
 ~~~~~~~
 
-The runner automatically logs metrics to TensorBoard:
+The runner automatically logs metrics to the configured backend(s):
 
 **Training Metrics:**
 
@@ -167,6 +167,21 @@ The runner automatically logs metrics to TensorBoard:
 **Environment Metrics:**
 
 Custom metrics from environment ``extras["log"]`` are automatically logged.
+
+Backend selection example:
+
+.. code-block:: python
+
+   cfg = PPOConfig(
+       logger_backend="wandb",
+       logger_kwargs={
+           "project": "apexrl",
+           "tags": ["ppo"],
+       },
+   )
+
+TensorBoard is included in the default install. ``wandb`` and ``swanlab`` need
+their optional extras installed before use.
 
 Reward Components
 ~~~~~~~~~~~~~~~~~

@@ -24,10 +24,17 @@ or with ``uv``:
 
 Core requirements:
 
-- Python >= 3.11
+- Python >= 3.10
 - PyTorch >= 2.0
 - Gymnasium >= 0.29
 - TensorDict >= 0.6
+
+Optional logging extras:
+
+.. code-block:: bash
+
+   pip install -e ".[wandb]"
+   pip install -e ".[swanlab]"
 
 Training Entry Points
 ---------------------
@@ -127,6 +134,28 @@ In this format:
 - the actor receives ``obs``
 - PPO with ``use_asymmetric=True`` sends ``privileged_obs`` to the critic
 - SAC stores actor and critic branches separately in replay
+
+Logging Backends
+----------------
+
+Runner and algorithm configs support ``tensorboard``, ``wandb``, and
+``swanlab`` through the shared ``logger_backend`` and ``logger_kwargs`` fields.
+
+Single backend example:
+
+.. code-block:: python
+
+   cfg = PPOConfig(
+       logger_backend="wandb",
+       logger_kwargs={
+           "project": "apexrl",
+           "entity": "your_team",
+           "tags": ["ppo", "cartpole"],
+       },
+   )
+
+``tensorboard`` is available in the default install. ``wandb`` and ``swanlab``
+require the optional extras from the installation guide.
 
 Next Steps
 ----------

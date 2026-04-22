@@ -6,7 +6,7 @@ This guide covers the current ApexRL installation path.
 Requirements
 ------------
 
-- Python >= 3.11
+- Python >= 3.10
 - PyTorch >= 2.0
 - Gymnasium >= 0.29
 - NumPy >= 1.24
@@ -30,6 +30,23 @@ Using uv
    cd Apex_rl
    uv pip install -e .
 
+Optional Logging Extras
+-----------------------
+
+Install optional SDKs when using hosted logging backends:
+
+.. code-block:: bash
+
+   pip install -e ".[wandb]"
+   pip install -e ".[swanlab]"
+
+With ``uv``:
+
+.. code-block:: bash
+
+   uv pip install -e ".[wandb]"
+   uv pip install -e ".[swanlab]"
+
 Verification
 ------------
 
@@ -45,5 +62,6 @@ Recommended Runtime Notes
 -------------------------
 
 - TensorBoard logging works out of the box through the ``tensorboard`` dependency.
+- ``wandb`` and ``swanlab`` are optional extras because not every installation needs hosted experiment tracking.
 - Structured observation support relies on ``tensordict`` and is enabled in the default install.
 - For local development, use a dedicated virtual environment to avoid PyTorch dependency conflicts.

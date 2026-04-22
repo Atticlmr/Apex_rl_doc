@@ -14,7 +14,7 @@ ApexRL Documentation
    :target: https://github.com/Atticlmr/Apex_rl/blob/main/LICENSE
    :alt: License
 
-.. image:: https://img.shields.io/badge/python-3.11%2B-blue.svg
+.. image:: https://img.shields.io/badge/python-3.10%2B-blue.svg
    :target: https://www.python.org/
    :alt: Python
 

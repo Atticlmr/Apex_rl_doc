@@ -24,10 +24,17 @@
 
 核心依赖：
 
-- Python >= 3.11
+- Python >= 3.10
 - PyTorch >= 2.0
 - Gymnasium >= 0.29
 - TensorDict >= 0.6
+
+可选日志依赖：
+
+.. code-block:: bash
+
+   pip install -e ".[wandb]"
+   pip install -e ".[swanlab]"
 
 训练入口
 --------
@@ -126,6 +133,27 @@
 - actor 接收 ``obs``
 - PPO 在 ``use_asymmetric=True`` 时会把 ``privileged_obs`` 传给 critic
 - SAC 会在 replay 中分别存储 actor 和 critic 的观测分支
+
+日志后端
+--------
+
+Runner 和算法配置支持 ``tensorboard``、``wandb``、``swanlab``，统一通过
+``logger_backend`` 和 ``logger_kwargs`` 配置。
+
+单后端示例：
+
+.. code-block:: python
+
+   cfg = PPOConfig(
+       logger_backend="wandb",
+       logger_kwargs={
+           "project": "apexrl",
+           "entity": "your_team",
+           "tags": ["ppo", "cartpole"],
+       },
+   )
+
+``tensorboard`` 默认可用；``wandb`` 和 ``swanlab`` 需要先安装对应可选依赖。
 
 下一步
 ------
