@@ -7,8 +7,8 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   apexrl.algorithms.dqn
    apexrl.algorithms.ppo
-   apexrl.algorithms.sac
    apexrl.algorithms.sac
 
 Module contents

@@ -1,14 +1,6 @@
 apexrl.models package
 =====================
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   apexrl.models.dynamics
-
 Submodules
 ----------
 
@@ -16,6 +8,7 @@ Submodules
    :maxdepth: 4
 
    apexrl.models.base
+   apexrl.models.dynamics
    apexrl.models.mlp
 
 Module contents

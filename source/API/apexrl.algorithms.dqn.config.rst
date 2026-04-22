@@ -1,7 +1,7 @@
-apexrl.algorithms.ppo.config module
+apexrl.algorithms.dqn.config module
 ===================================
 
-.. automodule:: apexrl.algorithms.ppo.config
+.. automodule:: apexrl.algorithms.dqn.config
    :members:
    :show-inheritance:
    :undoc-members:

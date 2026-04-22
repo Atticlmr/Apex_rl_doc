@@ -1,7 +1,7 @@
-apexrl.algorithms.ppo.ppo module
+apexrl.algorithms.dqn.dqn module
 ================================
 
-.. automodule:: apexrl.algorithms.ppo.ppo
+.. automodule:: apexrl.algorithms.dqn.dqn
    :members:
    :show-inheritance:
    :undoc-members:

@@ -1,8 +1,8 @@
-apexrl.buffer.distillation\_buffer module
-=========================================
+apexrl.buffer.distillation_buffer module
+========================================
 
 .. note::
 
-   ``DistillationBuffer`` is a planned component for policy distillation and
-   imitation-learning workflows. The module stub exists, but the runtime class
+   The distillation pipeline is still under development. The module stub is kept
+   here so the API reference remains structurally complete, but the runtime API
    has not been implemented yet, so no API members are generated on this page.
