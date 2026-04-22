@@ -6,6 +6,38 @@ All notable changes to ApexRL will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+[0.2.0] - 2026-04-22
+--------------------
+
+Added
+~~~~~
+
+- End-to-end ``TensorDict`` and nested-dict observation support across PPO,
+  DQN, SAC, vectorized Gymnasium wrappers, replay buffers, and rollout
+  buffers.
+- Multimodal observation support for default training stacks, including common
+  combinations such as image plus vector inputs.
+- Privileged critic observation support for asymmetric actor-critic training,
+  with separate actor and critic observation branches in PPO and SAC.
+- Structured-observation smoke and regression coverage for PPO, DQN, SAC, and
+  buffer behavior.
+
+Changed
+~~~~~~~
+
+- Default MLP actor, critic, and Q-network implementations now flatten nested
+  observation leaves recursively, so they can be used directly with structured
+  inputs.
+- README and bilingual documentation now describe the structured observation
+  format, PPO training flow, SAC critic branches, and multimodal custom-network
+  authoring.
+
+Fixed
+~~~~~
+
+- Off-policy runners and Gymnasium wrappers now preserve structured final
+  observations consistently when episodes terminate or truncate.
+
 [0.0.3] - 2026-04-20
 --------------------
 

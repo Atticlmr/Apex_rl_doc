@@ -6,6 +6,33 @@ ApexRL 的所有显著变更都将记录在此文件中。
 格式基于 `Keep a Changelog <https://keepachangelog.com/zh-CN/1.0.0/>`_，
 本项目遵循 `语义化版本控制 <https://semver.org/lang/zh-CN/>`_。
 
+[0.2.0] - 2026-04-22
+--------------------
+
+新增
+~~~~
+
+- 在 PPO、DQN、SAC、Gymnasium 向量环境包装器、ReplayBuffer 和
+  RolloutBuffer 中打通 ``TensorDict`` / 嵌套字典观测支持。
+- 默认训练链路支持多模态观测，例如图像加向量的组合输入。
+- 支持 asymmetric actor-critic 的 privileged critic 观测，并在 PPO 与
+  SAC 中拆分 actor / critic 观测分支。
+- 新增 PPO、DQN、SAC 以及缓冲区在结构化观测下的 smoke 与回归测试覆盖。
+
+变更
+~~~~
+
+- 默认 MLP actor、critic 和 Q 网络现在会递归展平嵌套观测叶子节点，可直接
+  处理结构化输入。
+- README 与中英文文档补充了结构化观测格式、PPO 训练流程、SAC critic 分支
+  以及多模态自定义网络的写法。
+
+修复
+~~~~
+
+- 异策略 runner 与 Gymnasium 包装器现在会在回合终止或截断时一致地保留
+  结构化 ``final_observation``。
+
 [0.0.3] - 2026-04-20
 --------------------
 

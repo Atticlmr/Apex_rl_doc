@@ -13,8 +13,8 @@ sys.path.insert(0, os.path.abspath('../../src'))
 project = 'ApexRL'
 copyright = '2026, Atticlmr'
 author = 'Atticlmr'
-release = '0.1.0'
-version = '0.1.0'
+release = '0.2.0'
+version = '0.2.0'
 
 # -- General configuration ---------------------------------------------------
 extensions = [

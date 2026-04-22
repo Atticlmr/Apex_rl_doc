@@ -6,7 +6,7 @@ ApexRL Documentation
 
 **ApexRL** is a modular reinforcement learning library designed for high-performance RL research and applications. It provides a clean, extensible architecture optimized for GPU-accelerated environments like Isaac Gym and Isaac Sim.
 
-.. image:: https://img.shields.io/badge/version-0.1.0-blue.svg
+.. image:: https://img.shields.io/badge/version-0.2.0-blue.svg
    :target: https://github.com/Atticlmr/Apex_rl
    :alt: Version
 
