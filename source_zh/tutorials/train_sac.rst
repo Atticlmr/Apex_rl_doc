@@ -1,36 +1,28 @@
 如何训练 SAC
 ============
 
-本教程展示如何在 ApexRL 中使用标准流程训练 SAC 智能体。
+本教程展示 ApexRL 当前版本中的 SAC 工作流。
 
-概览
+概述
 ----
 
-当前仓库中推荐的 SAC 训练组合是：
+推荐组合：
 
-- ``GymVecEnvContinuous`` 用于连续控制 Gymnasium 任务
+- ``GymVecEnvContinuous`` 用于连续 Gymnasium 任务
 - ``OffPolicyRunner`` 作为标准训练入口
-- ``MLPSquashedGaussianActor`` 作为默认随机策略
-- ``MLPContinuousQNetwork`` 作为默认 twin critic 基线
+- ``MLPSquashedGaussianActor`` 作为默认 actor
+- ``MLPContinuousQNetwork`` 作为默认 twin-critic 基线
 
-前置要求
+标准示例
 --------
-
-安装 ApexRL 和 Gymnasium：
-
-.. code-block:: bash
-
-   pip install -e .
-
-环境准备
---------
-
-对于 SAC，推荐先从 ``Pendulum-v1`` 这类连续动作任务开始。
 
 .. code-block:: python
 
    import gymnasium as gym
+   import torch
 
+   from apexrl.agent.off_policy_runner import OffPolicyRunner
+   from apexrl.algorithms.sac import SACConfig
    from apexrl.envs.gym_wrapper import GymVecEnvContinuous
 
 
@@ -40,17 +32,6 @@
 
    env = GymVecEnvContinuous([make_env for _ in range(2)], device="cpu")
 
-构建 Runner
------------
-
-``OffPolicyRunner`` 会创建 SAC agent、填充 replay，并调度
-actor / critic / temperature 更新。
-
-.. code-block:: python
-
-   from apexrl.agent.off_policy_runner import OffPolicyRunner
-   from apexrl.algorithms.sac import SACConfig
-
    cfg = SACConfig(
        batch_size=256,
        buffer_size=100_000,
@@ -59,8 +40,7 @@ actor / critic / temperature 更新。
        critic_learning_rate=3e-4,
        alpha_learning_rate=3e-4,
        tau=0.005,
-       log_interval=1_000,
-       save_interval=10_000,
+       device="cpu",
    )
 
    runner = OffPolicyRunner(
@@ -69,102 +49,50 @@ actor / critic / temperature 更新。
        algorithm="sac",
        log_dir="./logs/sac_pendulum",
        save_dir="./checkpoints/sac_pendulum",
-   )
-
-训练
-----
-
-.. code-block:: python
-
-   runner.learn(total_timesteps=100_000)
-
-评估与保存
-----------
-
-.. code-block:: python
-
-   stats = runner.eval(num_episodes=10)
-   print(f"平均奖励: {stats['eval/mean_reward']:.2f}")
-
-   runner.save_checkpoint("sac_pendulum_final.pt")
-   env.close()
-
-完整示例
---------
-
-.. code-block:: python
-
-   import gymnasium as gym
-
-   from apexrl.agent.off_policy_runner import OffPolicyRunner
-   from apexrl.algorithms.sac import SACConfig
-   from apexrl.envs.gym_wrapper import GymVecEnvContinuous
-
-
-   def make_env():
-       return gym.make("Pendulum-v1")
-
-
-   env = GymVecEnvContinuous([make_env for _ in range(2)], device="cpu")
-
-   cfg = SACConfig(
-       batch_size=256,
-       buffer_size=100_000,
-       learning_starts=5_000,
-       actor_learning_rate=3e-4,
-       critic_learning_rate=3e-4,
-       alpha_learning_rate=3e-4,
-       tau=0.005,
-   )
-
-   runner = OffPolicyRunner(
-       env=env,
-       cfg=cfg,
-       algorithm="sac",
-       log_dir="./logs/sac_pendulum",
+       device=torch.device("cpu"),
    )
 
    runner.learn(total_timesteps=100_000)
    print(runner.eval(num_episodes=10))
-   runner.save_checkpoint("sac_pendulum_final.pt")
-   env.close()
+   runner.close()
 
-SAC 实际优化什么
-----------------
+结构化观测
+----------
 
-SAC 同时更新三组目标：
+SAC 仍然要求 ``Box`` 动作空间，但观测已经不需要再是单个扁平张量。
 
-.. math::
+当前实现支持结构化 actor 观测，以及可选的 critic-only privileged observations：
 
-   y = r + \gamma (1-d)\left(\min(Q_1'(s', a'), Q_2'(s', a')) - \alpha \log \pi(a'|s')\right)
+.. code-block:: python
 
-.. math::
+   {
+       "obs": {
+           "image": image,
+           "vector": vector,
+       },
+       "privileged_obs": {
+           "state": state,
+           "context": context,
+       },
+   }
 
-   L_{Q_i} = \mathbb{E}\left[(Q_i(s, a) - y)^2\right]
+现在 SAC 内部会：
 
-.. math::
-
-   L_{\pi} = \mathbb{E}\left[\alpha \log \pi(a|s) - \min(Q_1(s, a), Q_2(s, a))\right]
-
-.. math::
-
-   L_{\alpha} = -\mathbb{E}\left[\log \alpha \cdot (\log \pi(a|s) + \mathcal{H}_{target})\right]
-
-在 ApexRL 中，这些公式已经直接写进
-:doc:`../API/apexrl.algorithms.sac` 对应实现附近的注释里。
+- 把 ``obs`` 传给 actor
+- 当存在 ``privileged_obs`` 时，把它传给两个 critic
+- 在 replay 中分别存储 actor 和 critic 的观测分支
 
 说明
 ----
 
-- 当前 SAC 只支持 ``Box`` 观测和 ``Box`` 动作空间。
-- 默认策略是 squashed Gaussian actor，不是 PPO 那种 unsquashed Gaussian。
-- ``OffPolicyRunner`` 是推荐训练入口。
-- ``SAC.learn()`` 仍可直接使用，但本质上也是同一个 runner 的轻量封装。
+- SAC 支持 ``Box`` 动作空间
+- 观测可以是普通张量，也可以是结构化 ``TensorDict`` / 嵌套 dict
+- 默认策略是 squashed Gaussian actor，不同于 PPO 的 unsquashed Gaussian
+- ``OffPolicyRunner`` 仍然是推荐入口
 
 下一步
 ------
 
-- 阅读 :doc:`train_ppo` 了解同策略训练流程
-- 阅读 :doc:`train_dqn` 了解离散异策略训练流程
+- 阅读 :doc:`custom_network` 了解自定义 actor / critic
+- 阅读 :doc:`custom_environment` 了解结构化观测环境设计
 - 阅读 :doc:`../modules/algorithms` 查看 SAC 细节
-- 阅读 :doc:`../modules/runners` 查看 runner API

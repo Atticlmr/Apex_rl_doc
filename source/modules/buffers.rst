@@ -22,6 +22,7 @@ Key Features
 
 - Efficient tensor storage on GPU
 - Support for multi-dimensional observations
+- Support for structured ``TensorDict`` / nested dict observations
 - Support for both scalar discrete and multi-dimensional continuous actions
 - Generalized Advantage Estimation (GAE)
 - Privileged observations for asymmetric actor-critic
@@ -183,6 +184,10 @@ For off-policy algorithms such as DQN and SAC:
 For discrete-action DQN, ``action_shape=()`` stores scalar action indices.
 For SAC and other continuous-control off-policy algorithms, set
 ``action_shape`` to the vector action shape so replay stores full actions.
+
+Replay also supports storing a separate critic observation branch. In the current
+SAC implementation this is used to keep actor observations and privileged critic
+observations separate inside replay.
 
 API Reference
 ~~~~~~~~~~~~~

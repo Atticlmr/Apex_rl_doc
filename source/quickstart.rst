@@ -1,12 +1,12 @@
 Quick Start
 ===========
 
-This guide will help you get started with ApexRL in just a few minutes.
+This guide shows the current recommended training entrypoints in ApexRL.
 
 Installation
 ------------
 
-Install ApexRL from source:
+Install from source:
 
 .. code-block:: bash
 
@@ -14,7 +14,7 @@ Install ApexRL from source:
    cd Apex_rl
    pip install -e .
 
-Or using uv (faster):
+or with ``uv``:
 
 .. code-block:: bash
 
@@ -22,100 +22,117 @@ Or using uv (faster):
    cd Apex_rl
    uv pip install -e .
 
-Requirements
-------------
+Core requirements:
 
 - Python >= 3.11
-- PyTorch >= 2.0.0
-- Gymnasium >= 0.29.0
-- NumPy >= 1.24.0
+- PyTorch >= 2.0
+- Gymnasium >= 0.29
+- TensorDict >= 0.6
 
-Your First RL Agent
--------------------
+Training Entry Points
+---------------------
 
-Here's a minimal example to train a PPO agent on a Gymnasium environment:
+- ``OnPolicyRunner`` is the canonical entrypoint for PPO
+- ``OffPolicyRunner`` is the canonical entrypoint for DQN and SAC
+- ``PPO.learn()``, ``DQN.learn()``, and ``SAC.learn()`` remain available as thin wrappers
+
+First PPO Agent
+---------------
+
+Discrete control:
 
 .. code-block:: python
 
    import gymnasium as gym
+   import torch
+
    from apexrl.agent.on_policy_runner import OnPolicyRunner
-   from apexrl.envs.gym_wrapper import GymVecEnvContinuous
-   from apexrl.models.mlp import MLPActor, MLPCritic
+   from apexrl.algorithms.ppo import PPOConfig
+   from apexrl.envs.gym_wrapper import GymVecEnv
+   from apexrl.models import MLPDiscreteActor, MLPCritic
 
-   # Create vectorized environment
+
    def make_env():
-       return gym.make("Pendulum-v1")
+       return gym.make("CartPole-v1")
 
-   env = GymVecEnvContinuous([make_env for _ in range(8)], device="cpu")
 
-   # Create runner with default PPO configuration
-   # OnPolicyRunner is the canonical training entrypoint for PPO.
+   env = GymVecEnv([make_env for _ in range(8)], device="cpu")
+
    runner = OnPolicyRunner(
        env=env,
-       algorithm="ppo",
-       actor_class=MLPActor,
+       cfg=PPOConfig(device="cpu", learning_rate_schedule="constant"),
+       actor_class=MLPDiscreteActor,
        critic_class=MLPCritic,
-       log_dir="./logs",
+       log_dir="./logs/cartpole_ppo",
+       device=torch.device("cpu"),
    )
 
-   # Train for 100,000 timesteps
    runner.learn(total_timesteps=100_000)
+   runner.close()
 
-   # Save the trained model
-   runner.save_checkpoint("model_final.pt")
-
-   env.close()
-
-Using Custom Networks
----------------------
-
-You can easily define custom Actor and Critic networks:
+Continuous control:
 
 .. code-block:: python
 
-   from apexrl.models.base import ContinuousActor, Critic
-   import torch.nn as nn
+   import gymnasium as gym
+   import torch
 
-   class CustomActor(ContinuousActor):
-       def __init__(self, obs_space, action_space, cfg):
-           super().__init__(obs_space, action_space, cfg)
-           
-           obs_dim = obs_space.shape[0]
-           action_dim = action_space.shape[0]
-           
-           self.network = nn.Sequential(
-               nn.Linear(obs_dim, 256),
-               nn.ReLU(),
-               nn.Linear(256, 256),
-               nn.ReLU(),
-               nn.Linear(256, action_dim),
-           )
-           self.log_std = nn.Parameter(torch.zeros(action_dim))
-       
-       def get_action_dist(self, obs):
-           mean = self.network(obs)
-           std = torch.exp(self.log_std)
-           return torch.distributions.Normal(mean, std)
+   from apexrl.agent.on_policy_runner import OnPolicyRunner
+   from apexrl.algorithms.ppo import PPOConfig
+   from apexrl.envs.gym_wrapper import GymVecEnvContinuous
+   from apexrl.models import MLPActor, MLPCritic
 
-   # Use your custom actor
+
+   def make_env():
+       return gym.make("Pendulum-v1")
+
+
+   env = GymVecEnvContinuous([make_env for _ in range(8)], device="cpu")
+
    runner = OnPolicyRunner(
        env=env,
-       actor_class=CustomActor,
+       cfg=PPOConfig(device="cpu"),
+       actor_class=MLPActor,
        critic_class=MLPCritic,
-       # ... other args
+       log_dir="./logs/pendulum_ppo",
+       device=torch.device("cpu"),
    )
 
-Continuous-action PPO defaults to an unsquashed Gaussian policy
-(``use_tanh_squash=False``). ``GymVecEnvContinuous`` handles clipping and scaling
-to the Gymnasium action space, which is the recommended default setup.
+   runner.learn(total_timesteps=100_000)
+   runner.close()
+
+Structured Observations
+-----------------------
+
+The current repository version supports structured observations all the way through
+environment wrappers, buffers, algorithms, and default MLP models.
+
+Recommended environment output format:
+
+.. code-block:: python
+
+   {
+       "obs": {
+           "image": image,
+           "vector": vector,
+       },
+       "privileged_obs": {
+           "state": state,
+           "context": context,
+       },
+   }
+
+In this format:
+
+- the actor receives ``obs``
+- PPO with ``use_asymmetric=True`` sends ``privileged_obs`` to the critic
+- SAC stores actor and critic branches separately in replay
 
 Next Steps
 ----------
 
-- Learn about :doc:`tutorials/first_agent` for a detailed walkthrough
-- Read :doc:`tutorials/train_ppo` for the standard PPO training flow
-- Read :doc:`tutorials/train_dqn` for the standard DQN training flow
-- Read :doc:`tutorials/train_sac` for the continuous-control off-policy flow
-- Explore :doc:`modules/algorithms` to understand available algorithms
-- Check :doc:`modules/environments` for environment integration
-- Read :doc:`tutorials/custom_network` for advanced network architectures
+- Read :doc:`tutorials/train_ppo` for the standard PPO flow
+- Read :doc:`tutorials/train_dqn` for the standard DQN flow
+- Read :doc:`tutorials/train_sac` for the standard SAC flow
+- Read :doc:`tutorials/custom_network` for multimodal custom actors and critics
+- Read :doc:`tutorials/custom_environment` for TensorDict-based environment integration

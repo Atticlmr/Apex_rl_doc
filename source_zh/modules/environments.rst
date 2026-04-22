@@ -11,6 +11,7 @@ ApexRL 设计用于：
 1. **向量化环境** - GPU 加速并行环境
 2. **Gymnasium 环境** - 标准单线程环境
 3. **自定义环境** - 用户定义的仿真后端
+4. **结构化观测环境** - TensorDict / 嵌套 dict 观测树
 
 VecEnv（向量化环境）
 --------------------
@@ -71,7 +72,8 @@ DummyVecEnv
 Gymnasium 集成
 --------------
 
-ApexRL 为标准 Gymnasium 环境提供包装器。
+ApexRL 为标准 Gymnasium 环境提供包装器。这些包装器支持普通张量观测、
+结构化观测，以及显式的 timeout 元数据。
 
 GymVecEnv
 ~~~~~~~~~
@@ -106,6 +108,20 @@ GymVecEnvContinuous
 这是 Gymnasium ``Box`` 动作空间上运行 PPO 的推荐包装器。当前连续动作 PPO
 默认使用未经过 ``tanh`` 压缩的高斯策略（``use_tanh_squash=False``），
 由该包装器负责处理动作边界。
+
+推荐的结构化观测格式：
+
+.. code-block:: python
+
+   {
+       "obs": {
+           "image": image,
+           "vector": vector,
+       },
+       "privileged_obs": {
+           "state": state,
+       },
+   }
 
 API 参考
 ~~~~~~~~

@@ -104,8 +104,8 @@ Areas for Contribution
 Algorithms
 ~~~~~~~~~~
 
-- [ ] DQN (Deep Q-Network)
-- [ ] SAC (Soft Actor-Critic)
+- [x] DQN (Deep Q-Network)
+- [x] SAC (Soft Actor-Critic)
 - [ ] TD3 (Twin Delayed DDPG)
 - [ ] A3C (Asynchronous Advantage Actor-Critic)
 

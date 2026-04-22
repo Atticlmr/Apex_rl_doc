@@ -13,6 +13,9 @@ The network module is organized into:
 3. **CNN Implementations** - Convolutional networks for vision
 4. **Continuous Q Networks** - ``Q(s, a)`` critics for SAC-style algorithms
 
+The current runtime supports both flat tensor observations and structured
+``TensorDict`` / nested dict observation trees.
+
 Base Classes
 ------------
 
@@ -165,6 +168,10 @@ Multi-layer perceptron actor for continuous actions:
 The default MLP/CNN initializers are PPO-oriented: hidden layers use a larger
 gain for stable optimization, policy output layers use a small gain, and value
 output layers use gain 1.0.
+
+Current default MLP models can also consume structured observations. They flatten
+recursive observation trees internally, which makes them a practical baseline for
+multimodal inputs such as image + vector observations.
 
 .. autoclass:: apexrl.models.mlp.MLPActor
    :members:

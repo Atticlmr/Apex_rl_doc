@@ -22,6 +22,7 @@ RolloutBuffer
 
 - GPU 上的高效张量存储
 - 支持多维观测
+- 支持结构化 ``TensorDict`` / 嵌套 dict 观测
 - 同时支持标量离散动作和多维连续动作
 - 广义优势估计（GAE）
 - 用于非对称 Actor-Critic 的特权观测
@@ -183,6 +184,9 @@ ReplayBuffer
 对于离散动作 DQN，``action_shape=()`` 用于存储标量动作索引。
 对于 SAC 这类连续动作异策略算法，``action_shape`` 应设置为动作向量形状，
 这样 replay 才会保存完整连续动作。
+
+Replay 现在也支持单独存储 critic observation 分支。当前 SAC 会利用这一点，
+把 actor 观测和 privileged critic 观测在 replay 中分开保存。
 
 API 参考
 ~~~~~~~~

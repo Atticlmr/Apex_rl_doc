@@ -104,8 +104,8 @@ Pull Request 流程
 算法
 ~~~~
 
-- [ ] DQN（深度 Q 网络）
-- [ ] SAC（软 Actor-Critic）
+- [x] DQN（深度 Q 网络）
+- [x] SAC（软 Actor-Critic）
 - [ ] TD3（双延迟 DDPG）
 - [ ] A3C（异步优势 Actor-Critic）
 

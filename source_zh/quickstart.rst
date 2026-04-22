@@ -1,12 +1,12 @@
 快速开始
 ========
 
-本指南将帮助您在几分钟内开始使用 ApexRL。
+本指南展示 ApexRL 当前版本推荐的训练入口。
 
 安装
 ----
 
-从源代码安装 ApexRL：
+从源码安装：
 
 .. code-block:: bash
 
@@ -14,7 +14,7 @@
    cd Apex_rl
    pip install -e .
 
-或者使用 uv（更快）：
+或者使用 ``uv``：
 
 .. code-block:: bash
 
@@ -22,100 +22,116 @@
    cd Apex_rl
    uv pip install -e .
 
-环境要求
---------
+核心依赖：
 
 - Python >= 3.11
-- PyTorch >= 2.0.0
-- Gymnasium >= 0.29.0
-- NumPy >= 1.24.0
+- PyTorch >= 2.0
+- Gymnasium >= 0.29
+- TensorDict >= 0.6
 
-您的第一个 RL 智能体
---------------------
+训练入口
+--------
 
-以下是一个在 Gymnasium 环境上训练 PPO 智能体的最小示例：
+- ``OnPolicyRunner`` 是 PPO 的标准入口
+- ``OffPolicyRunner`` 是 DQN 和 SAC 的标准入口
+- ``PPO.learn()``、``DQN.learn()``、``SAC.learn()`` 仍然可用，但只是轻量封装
+
+第一个 PPO 智能体
+-----------------
+
+离散动作任务：
 
 .. code-block:: python
 
    import gymnasium as gym
+   import torch
+
    from apexrl.agent.on_policy_runner import OnPolicyRunner
-   from apexrl.envs.gym_wrapper import GymVecEnvContinuous
-   from apexrl.models.mlp import MLPActor, MLPCritic
+   from apexrl.algorithms.ppo import PPOConfig
+   from apexrl.envs.gym_wrapper import GymVecEnv
+   from apexrl.models import MLPDiscreteActor, MLPCritic
 
-   # 创建向量化环境
+
    def make_env():
-       return gym.make("Pendulum-v1")
+       return gym.make("CartPole-v1")
 
-   env = GymVecEnvContinuous([make_env for _ in range(8)], device="cpu")
 
-   # 使用默认 PPO 配置创建 runner
-   # OnPolicyRunner 是 PPO 的标准训练入口。
+   env = GymVecEnv([make_env for _ in range(8)], device="cpu")
+
    runner = OnPolicyRunner(
        env=env,
-       algorithm="ppo",
-       actor_class=MLPActor,
+       cfg=PPOConfig(device="cpu", learning_rate_schedule="constant"),
+       actor_class=MLPDiscreteActor,
        critic_class=MLPCritic,
-       log_dir="./logs",
+       log_dir="./logs/cartpole_ppo",
+       device=torch.device("cpu"),
    )
 
-   # 训练 100,000 步
    runner.learn(total_timesteps=100_000)
+   runner.close()
 
-   # 保存训练好的模型
-   runner.save_checkpoint("model_final.pt")
-
-   env.close()
-
-使用自定义网络
---------------
-
-您可以轻松定义自定义 Actor 和 Critic 网络：
+连续动作任务：
 
 .. code-block:: python
 
-   from apexrl.models.base import ContinuousActor, Critic
-   import torch.nn as nn
+   import gymnasium as gym
+   import torch
 
-   class CustomActor(ContinuousActor):
-       def __init__(self, obs_space, action_space, cfg):
-           super().__init__(obs_space, action_space, cfg)
-           
-           obs_dim = obs_space.shape[0]
-           action_dim = action_space.shape[0]
-           
-           self.network = nn.Sequential(
-               nn.Linear(obs_dim, 256),
-               nn.ReLU(),
-               nn.Linear(256, 256),
-               nn.ReLU(),
-               nn.Linear(256, action_dim),
-           )
-           self.log_std = nn.Parameter(torch.zeros(action_dim))
-       
-       def get_action_dist(self, obs):
-           mean = self.network(obs)
-           std = torch.exp(self.log_std)
-           return torch.distributions.Normal(mean, std)
+   from apexrl.agent.on_policy_runner import OnPolicyRunner
+   from apexrl.algorithms.ppo import PPOConfig
+   from apexrl.envs.gym_wrapper import GymVecEnvContinuous
+   from apexrl.models import MLPActor, MLPCritic
 
-   # 使用您的自定义 actor
+
+   def make_env():
+       return gym.make("Pendulum-v1")
+
+
+   env = GymVecEnvContinuous([make_env for _ in range(8)], device="cpu")
+
    runner = OnPolicyRunner(
        env=env,
-       actor_class=CustomActor,
+       cfg=PPOConfig(device="cpu"),
+       actor_class=MLPActor,
        critic_class=MLPCritic,
-       # ... 其他参数
+       log_dir="./logs/pendulum_ppo",
+       device=torch.device("cpu"),
    )
 
-连续动作 PPO 默认使用未经过 ``tanh`` 压缩的高斯策略
-（``use_tanh_squash=False``）。推荐配合 ``GymVecEnvContinuous``，
-由环境包装器负责裁剪和缩放到 Gymnasium 的动作范围。
+   runner.learn(total_timesteps=100_000)
+   runner.close()
+
+结构化观测
+----------
+
+当前版本已经支持结构化观测贯穿环境包装器、buffer、算法和默认 MLP 模型。
+
+推荐的环境输出格式：
+
+.. code-block:: python
+
+   {
+       "obs": {
+           "image": image,
+           "vector": vector,
+       },
+       "privileged_obs": {
+           "state": state,
+           "context": context,
+       },
+   }
+
+在这种格式下：
+
+- actor 接收 ``obs``
+- PPO 在 ``use_asymmetric=True`` 时会把 ``privileged_obs`` 传给 critic
+- SAC 会在 replay 中分别存储 actor 和 critic 的观测分支
 
 下一步
 ------
 
-- 阅读 :doc:`tutorials/first_agent` 了解详细教程
-- 阅读 :doc:`tutorials/train_ppo` 了解标准 PPO 训练流程
-- 阅读 :doc:`tutorials/train_dqn` 了解标准 DQN 训练流程
-- 阅读 :doc:`tutorials/train_sac` 了解连续控制异策略训练流程
-- 探索 :doc:`modules/algorithms` 了解可用算法
-- 查看 :doc:`modules/environments` 了解环境集成
-- 阅读 :doc:`tutorials/custom_network` 了解高级网络架构
+- 阅读 :doc:`tutorials/train_ppo` 了解标准 PPO 流程
+- 阅读 :doc:`tutorials/train_dqn` 了解标准 DQN 流程
+- 阅读 :doc:`tutorials/train_sac` 了解标准 SAC 流程
+- 阅读 :doc:`tutorials/custom_network` 了解多模态自定义 actor / critic
+- 阅读 :doc:`tutorials/custom_environment` 了解 TensorDict 环境接入方式

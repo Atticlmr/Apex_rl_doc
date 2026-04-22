@@ -11,6 +11,7 @@ ApexRL is designed to work with:
 1. **Vectorized Environments** - GPU-accelerated parallel environments
 2. **Gymnasium Environments** - Standard single-threaded environments
 3. **Custom Environments** - User-defined simulation backends
+4. **Structured Observation Environments** - TensorDict / nested dict observation trees
 
 VecEnv (Vectorized Environment)
 -------------------------------
@@ -71,7 +72,8 @@ A simple test environment:
 Gymnasium Integration
 ---------------------
 
-ApexRL provides wrappers for standard Gymnasium environments.
+ApexRL provides wrappers for standard Gymnasium environments. The wrappers support
+plain tensor observations, structured observations, and explicit timeout metadata.
 
 GymVecEnv
 ~~~~~~~~~
@@ -106,6 +108,20 @@ For continuous action spaces with automatic clipping and action-space scaling:
 This is the recommended wrapper for PPO on Gymnasium ``Box`` action spaces.
 The default continuous PPO policy is an unsquashed Gaussian
 (``use_tanh_squash=False``), and the wrapper handles action bounds.
+
+Recommended structured observation format:
+
+.. code-block:: python
+
+   {
+       "obs": {
+           "image": image,
+           "vector": vector,
+       },
+       "privileged_obs": {
+           "state": state,
+       },
+   }
 
 API Reference
 ~~~~~~~~~~~~~
