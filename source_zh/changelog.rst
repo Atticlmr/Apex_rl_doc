@@ -6,6 +6,31 @@ ApexRL 的所有显著变更都将记录在此文件中。
 格式基于 `Keep a Changelog <https://keepachangelog.com/zh-CN/1.0.0/>`_，
 本项目遵循 `语义化版本控制 <https://semver.org/lang/zh-CN/>`_。
 
+[0.2.1] - 2026-04-22
+--------------------
+
+新增
+~~~~
+
+- 正式在 PPO、DQN、SAC 中接入仓库内置的 ``Muon`` 优化器实现，并沿用
+  Muon 加辅助 Adam 的混合优化路径。
+- 新增 ``optimizer="muon"`` 下 PPO、DQN、SAC 的 smoke 测试覆盖。
+
+变更
+~~~~
+
+- 优化器构建逻辑现在会为 ``Muon`` 自动做参数分组，让隐藏层矩阵权重走
+  Muon，bias、标量参数和输出头相关参数继续走辅助 Adam。
+
+修复
+~~~~
+
+- 结构化观测链路现在会端到端保留各叶子节点的原始 dtype，使多模态环境中的
+  ``uint8`` 图像和其他非浮点模态能正确穿过包装器、缓冲区和算法输入链路。
+- API Reference 补齐了缺失的 DQN 页面，去掉了重复的 SAC 条目，并恢复了
+  OffPolicyRunner 的文档入口。
+- 在集成验证补齐前，临时移除了 Brax、Isaac Gym 和 Isaac Lab 的环境文档示例。
+
 [0.2.0] - 2026-04-22
 --------------------
 

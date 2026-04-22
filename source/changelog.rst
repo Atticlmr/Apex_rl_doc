@@ -6,6 +6,35 @@ All notable changes to ApexRL will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+[0.2.1] - 2026-04-22
+--------------------
+
+Added
+~~~~~
+
+- Official ``Muon`` optimizer support across PPO, DQN, and SAC using the
+  bundled mixed Muon-plus-AuxAdam implementation.
+- Smoke-test coverage for PPO, DQN, and SAC training with
+  ``optimizer="muon"``.
+
+Changed
+~~~~~~~
+
+- Optimizer construction now routes ``Muon`` through parameter grouping so
+  matrix-like hidden weights use Muon while scalar, bias, and output-head
+  parameters stay on the auxiliary Adam path.
+
+Fixed
+~~~~~
+
+- Structured observation tensors now preserve leaf dtypes end to end, so
+  multimodal environments keep ``uint8`` image leaves and other non-float
+  modalities intact through wrappers, buffers, and algorithm input paths.
+- API reference now includes the missing DQN pages, removes duplicate SAC
+  entries, and restores the missing OffPolicyRunner documentation entry.
+- Environment documentation drops the unverified Brax, Isaac Gym, and Isaac
+  Lab examples until tested integration guides are added back.
+
 [0.2.0] - 2026-04-22
 --------------------
 
