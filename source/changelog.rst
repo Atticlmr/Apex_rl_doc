@@ -6,6 +6,17 @@ All notable changes to ApexRL will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+[0.2.2] - 2026-05-13
+--------------------
+
+Changed
+~~~~~~~
+
+- Improved runner logging so environment extras are recorded only from
+  user-selected ``extra_log_keys`` instead of hard-coded extras names.
+- Refined the logging documentation to describe configurable extras logging
+  more clearly.
+
 [0.2.1] - 2026-04-22
 --------------------
 
