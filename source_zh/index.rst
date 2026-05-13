@@ -35,6 +35,7 @@ ApexRL 文档
 * :doc:`tutorials/train_ppo` - 分步骤训练 PPO
 * :doc:`tutorials/train_dqn` - 分步骤训练 DQN
 * :doc:`tutorials/train_sac` - 分步骤训练 SAC
+* :doc:`tutorials/practice_examples` - 运行 Genesis 和 Atari 实践示例
 * :doc:`API/modules` - API 参考
 
 .. toctree::
@@ -54,6 +55,7 @@ ApexRL 文档
    tutorials/train_sac
    tutorials/custom_environment
    tutorials/custom_network
+   tutorials/practice_examples
 
 .. toctree::
    :hidden:

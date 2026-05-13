@@ -35,6 +35,7 @@ Quick Links
 * :doc:`tutorials/train_ppo` - Train PPO step by step
 * :doc:`tutorials/train_dqn` - Train DQN step by step
 * :doc:`tutorials/train_sac` - Train SAC step by step
+* :doc:`tutorials/practice_examples` - Run Genesis and Atari practice examples
 * :doc:`API/modules` - API reference
 
 .. toctree::
@@ -54,6 +55,7 @@ Quick Links
    tutorials/train_sac
    tutorials/custom_environment
    tutorials/custom_network
+   tutorials/practice_examples
 
 .. toctree::
    :hidden:
