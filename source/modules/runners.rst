@@ -27,8 +27,7 @@ Key Features
 - Automated training loop with callbacks
 - TensorBoard / wandb / SwanLab logging of metrics
 - Periodic checkpoint saving
-- Reward component tracking
-- Environment metrics logging
+- Configurable environment extras logging
 - Unified timeout handling for ``terminated`` / ``truncated`` episodes
 
 Basic Usage
@@ -75,7 +74,6 @@ Configuration
        device=torch.device("cuda"),      # Training device
        log_interval=10,                  # Log every N iterations
        save_interval=100,                # Save every N iterations
-       log_reward_components=True,       # Log reward components
    )
 
 If you instantiate ``PPO`` directly, ``PPO.learn()`` delegates to this runner so
@@ -195,12 +193,14 @@ Backend selection example:
 TensorBoard is included in the default install. ``wandb`` and ``swanlab`` need
 their optional extras installed before use.
 
-Reward Components
-~~~~~~~~~~~~~~~~~
+Environment Extras
+~~~~~~~~~~~~~~~~~~
 
-Track individual reward components:
+Choose the extras fields to log with ``extra_log_keys``:
 
 .. code-block:: python
+
+   cfg = PPOConfig(extra_log_keys=["log", "reward_components"])
 
    # In environment step()
    extras = {
@@ -217,17 +217,6 @@ Track individual reward components:
            "/robot/height_mean": robot_height.mean().item(),
        },
    }
-
-The runner automatically:
-
-1. Accumulates reward components per episode
-2. Logs mean values at episode end
-3. Logs configured extras keys under ``extra/...`` when ``extra_log_keys`` is set
-
-``reward_components`` are still accumulated and logged at episode boundaries
-when ``log_reward_components=True``. If ``"reward_components"`` is also included
-in ``extra_log_keys``, the same values are additionally logged as step-level
-extras under ``extra/reward_components/...``.
 
 Timeout semantics follow Gymnasium: ``terminated`` marks true terminals,
 ``truncated`` marks time limits or external truncation, and

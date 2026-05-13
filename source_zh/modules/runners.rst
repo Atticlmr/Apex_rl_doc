@@ -26,8 +26,7 @@ OnPolicyRunner
 - 带回调的自动化训练循环
 - TensorBoard / wandb / SwanLab 指标记录
 - 定期检查点保存
-- 奖励组件跟踪
-- 环境指标记录
+- 可配置的环境 extras 指标记录
 - 统一处理 ``terminated`` / ``truncated`` 超时语义
 
 基本用法
@@ -74,7 +73,6 @@ OnPolicyRunner
        device=torch.device("cuda"),      # 训练设备
        log_interval=10,                  # 每 N 次迭代记录
        save_interval=100,                # 每 N 次迭代保存
-       log_reward_components=True,       # 记录奖励组件
    )
 
 如果您直接实例化 ``PPO``，``PPO.learn()`` 也会委托给这个 runner，
@@ -191,12 +189,14 @@ Runner 会把指标记录到当前配置的日志后端：
 
 ``tensorboard`` 默认包含在基础安装中；``wandb`` 和 ``swanlab`` 需要先安装对应的可选依赖。
 
-奖励组件
-~~~~~~~~
+环境 Extras
+~~~~~~~~~~~
 
-跟踪各个奖励组件：
+通过 ``extra_log_keys`` 选择要记录的 extras 字段：
 
 .. code-block:: python
+
+   cfg = PPOConfig(extra_log_keys=["log", "reward_components"])
 
    # 在环境 step() 中
    extras = {
@@ -213,16 +213,6 @@ Runner 会把指标记录到当前配置的日志后端：
            "/robot/height_mean": robot_height.mean().item(),
        },
    }
-
-Runner 自动：
-
-1. 每回合累加奖励组件
-2. 回合结束时记录平均值
-3. 当设置 ``extra_log_keys`` 时，把配置的 extras key 记录到 ``extra/...``
-
-``reward_components`` 在 ``log_reward_components=True`` 时仍会按回合累计并记录。
-如果同时把 ``"reward_components"`` 放进 ``extra_log_keys``，这些值还会作为
-step-level extras 记录到 ``extra/reward_components/...``。
 
 超时语义遵循 Gymnasium：``terminated`` 表示真实终止，
 ``truncated`` 表示时间限制或外部截断，``final_observation``
