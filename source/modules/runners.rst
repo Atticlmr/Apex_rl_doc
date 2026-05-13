@@ -166,7 +166,19 @@ The runner automatically logs metrics to the configured backend(s):
 
 **Environment Metrics:**
 
-Custom metrics from environment ``extras["log"]`` are automatically logged.
+Generic environment extras are not logged by default. Add top-level extras keys
+to ``cfg.extra_log_keys`` to recursively log scalar-like values under
+``extra/<key>/...``:
+
+.. code-block:: python
+
+   cfg = PPOConfig(
+       extra_log_keys=["log", "time_outs", "terminated", "truncated"],
+   )
+
+This same configuration field is available on ``PPOConfig``, ``DQNConfig``, and
+``SACConfig``. Large observation payloads such as ``final_observation`` are
+skipped when extras are flattened for logging.
 
 Backend selection example:
 
@@ -210,7 +222,12 @@ The runner automatically:
 
 1. Accumulates reward components per episode
 2. Logs mean values at episode end
-3. Logs custom metrics from ``extras["log"]``
+3. Logs configured extras keys under ``extra/...`` when ``extra_log_keys`` is set
+
+``reward_components`` are still accumulated and logged at episode boundaries
+when ``log_reward_components=True``. If ``"reward_components"`` is also included
+in ``extra_log_keys``, the same values are additionally logged as step-level
+extras under ``extra/reward_components/...``.
 
 Timeout semantics follow Gymnasium: ``terminated`` marks true terminals,
 ``truncated`` marks time limits or external truncation, and

@@ -165,7 +165,17 @@ Runner 会把指标记录到当前配置的日志后端：
 
 **环境指标：**
 
-环境 ``extras["log"]`` 中的自定义指标会自动记录。
+通用环境 extras 默认不会记录。可以在 ``cfg.extra_log_keys`` 中配置要记录的
+顶层 extras key，runner 会递归展开其中的标量值，并写到 ``extra/<key>/...``：
+
+.. code-block:: python
+
+   cfg = PPOConfig(
+       extra_log_keys=["log", "time_outs", "terminated", "truncated"],
+   )
+
+``PPOConfig``、``DQNConfig`` 和 ``SACConfig`` 都支持这个字段。展开 extras
+用于日志时，会跳过 ``final_observation`` 这类较大的观测载荷。
 
 后端配置示例：
 
@@ -208,7 +218,11 @@ Runner 自动：
 
 1. 每回合累加奖励组件
 2. 回合结束时记录平均值
-3. 从 ``extras["log"]`` 记录自定义指标
+3. 当设置 ``extra_log_keys`` 时，把配置的 extras key 记录到 ``extra/...``
+
+``reward_components`` 在 ``log_reward_components=True`` 时仍会按回合累计并记录。
+如果同时把 ``"reward_components"`` 放进 ``extra_log_keys``，这些值还会作为
+step-level extras 记录到 ``extra/reward_components/...``。
 
 超时语义遵循 Gymnasium：``terminated`` 表示真实终止，
 ``truncated`` 表示时间限制或外部截断，``final_observation``
