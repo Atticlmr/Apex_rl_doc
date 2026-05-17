@@ -12,6 +12,7 @@ Subpackages
    apexrl.buffer
    apexrl.envs
    apexrl.models
+   apexrl.multiagent
    apexrl.optimizers
    apexrl.utils
 

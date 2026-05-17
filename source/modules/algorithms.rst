@@ -25,6 +25,14 @@ Available Algorithms
      - Off-policy
      - ✅ Available
      - Soft Actor-Critic
+   * - MAPPO
+     - Multi-agent on-policy
+     - ✅ Available
+     - Multi-Agent PPO with centralized critic support
+   * - IPPO
+     - Multi-agent on-policy
+     - ✅ Available
+     - Independent PPO with decentralized critics
 
 PPO (Proximal Policy Optimization)
 ----------------------------------
@@ -77,6 +85,36 @@ Basic Usage
 
 For new projects, prefer ``OnPolicyRunner`` as the primary training entrypoint
 and treat ``PPO`` as the algorithm implementation plugged into that runner.
+
+Multi-Agent PPO Algorithms
+--------------------------
+
+MAPPO and IPPO share the same multi-agent runner and rollout storage. MAPPO uses
+centralized training with decentralized execution: each actor consumes local
+agent observations, while critics can consume a centralized environment state.
+IPPO keeps the same per-agent actor interface but uses local observations for
+each critic by setting ``centralized_critic=False``.
+
+.. code-block:: python
+
+   from apexrl.models import MLPActor, MLPCritic
+   from apexrl.multiagent import IPPO, IPPOConfig, MAPPO, MAPPOConfig
+
+   mappo_cfg = MAPPOConfig(centralized_critic=True, share_actor=True)
+   mappo_agent = MAPPO(
+       env=multiagent_env,
+       cfg=mappo_cfg,
+       actor_class=MLPActor,
+       critic_class=MLPCritic,
+   )
+
+   ippo_cfg = IPPOConfig(share_actor=True)
+   ippo_agent = IPPO(
+       env=multiagent_env,
+       cfg=ippo_cfg,
+       actor_class=MLPActor,
+       critic_class=MLPCritic,
+   )
 
 Configuration
 ~~~~~~~~~~~~~

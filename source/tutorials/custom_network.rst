@@ -188,6 +188,105 @@ Using Custom Networks
        log_dir="./logs",
    )
 
+Multi-Agent Custom Networks
+---------------------------
+
+MAPPO and IPPO use the same custom network pattern as PPO: pass ApexRL actor and
+critic classes, plus optional configuration dictionaries. The network classes
+can contain arbitrary PyTorch modules internally while inheriting ApexRL's actor
+or critic base interfaces.
+
+.. code-block:: python
+
+   from apexrl.models.base import Critic, DiscreteActor
+   from apexrl.multiagent import IPPO, IPPOConfig, MAPPO, MAPPOConfig
+
+
+   class EntityDiscreteActor(DiscreteActor):
+       def __init__(self, obs_space, action_space, cfg=None):
+           super().__init__(obs_space, action_space, cfg)
+           # Build attention, graph, CNN or MLP blocks here.
+
+       def forward(self, obs):
+           ...
+
+       def get_action_dist(self, obs):
+           logits = self.forward(obs)
+           return torch.distributions.Categorical(logits=logits)
+
+
+   class EntityCritic(Critic):
+       def __init__(self, obs_space, cfg=None):
+           super().__init__(obs_space, cfg)
+           # Build the value network here.
+
+       def forward(self, obs):
+           ...
+
+       def get_value(self, obs):
+           return self.forward(obs)
+
+
+   mappo_agent = MAPPO(
+       env=multiagent_env,
+       cfg=MAPPOConfig(
+           centralized_critic=True,
+           share_actor=True,
+           share_critic=True,
+       ),
+       actor_class=EntityDiscreteActor,
+       critic_class=EntityCritic,
+       actor_cfg={"hidden_dim": 256},
+       critic_cfg={"hidden_dim": 512},
+   )
+
+   ippo_agent = IPPO(
+       env=multiagent_env,
+       cfg=IPPOConfig(share_actor=True, share_critic=True),
+       actor_class=EntityDiscreteActor,
+       critic_class=EntityCritic,
+   )
+
+For MAPPO with ``centralized_critic=True``, the critic receives
+``env.state_space`` and ``env.get_state()`` outputs. For IPPO, or MAPPO with
+``centralized_critic=False``, each critic receives that agent's local
+observation space and local observations. Actors always receive per-agent local
+observations.
+
+Parameter sharing is controlled by the multi-agent config:
+
+- ``share_actor=True`` creates one actor instance and reuses it for all agents.
+  This requires identical observation and action spaces across agents.
+- ``share_critic=True`` creates one critic instance and reuses it for all
+  agents. With decentralized critics, this requires identical observation
+  spaces; with centralized critics, all critics consume the shared state space.
+- Set either flag to ``False`` when agents need separate model parameters.
+
+You can also pass already constructed ApexRL actor/critic objects through the
+``models`` dictionary. This is useful for heterogeneous agents or for manually
+sharing selected modules:
+
+.. code-block:: python
+
+   models = {
+       "agent_0": {"policy": actor_0, "value": critic_0},
+       "agent_1": {"policy": actor_1, "value": critic_1},
+   }
+
+   agent = MAPPO(
+       possible_agents=["agent_0", "agent_1"],
+       observation_spaces=observation_spaces,
+       action_spaces=action_spaces,
+       state_space=state_space,
+       models=models,
+       cfg=MAPPOConfig(centralized_critic=True),
+   )
+
+For more complex multi-agent networks, prefer representing entities with fixed
+structured observations, such as ``spaces.Dict`` entries, padded tensors and
+masks. Attention, DeepSets, GNN and transformer-style encoders can then be
+implemented inside the actor or critic without changing MAPPO/IPPO.
+
 Best Practices
 --------------
 
@@ -196,3 +295,5 @@ Best Practices
 3. Use ``DiscreteActor`` for discrete PPO and ``ContinuousActor`` for continuous PPO.
 4. For SAC, keep custom critics in ``ContinuousQNetwork`` form, i.e. ``forward(obs, actions)``.
 5. Prefer explicit branch encoders for image + vector inputs instead of a single flat MLP.
+6. For MAPPO/IPPO, use local per-agent observations in actors and choose
+   centralized or decentralized critic observations through the algorithm config.

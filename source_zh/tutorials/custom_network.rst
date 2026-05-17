@@ -187,6 +187,102 @@ Critic 示例
        log_dir="./logs",
    )
 
+多智能体自定义网络
+------------------
+
+MAPPO 和 IPPO 使用与 PPO 相同的自定义网络模式：传入 ApexRL actor / critic
+类，并按需传入配置字典。网络内部可以包含任意 PyTorch 模块，例如 MLP、CNN、
+attention、GNN 或 transformer block，同时继承 ApexRL 的 actor / critic 基类。
+
+.. code-block:: python
+
+   from apexrl.models.base import Critic, DiscreteActor
+   from apexrl.multiagent import IPPO, IPPOConfig, MAPPO, MAPPOConfig
+
+
+   class EntityDiscreteActor(DiscreteActor):
+       def __init__(self, obs_space, action_space, cfg=None):
+           super().__init__(obs_space, action_space, cfg)
+           # 在这里构建 attention、graph、CNN 或 MLP 模块。
+
+       def forward(self, obs):
+           ...
+
+       def get_action_dist(self, obs):
+           logits = self.forward(obs)
+           return torch.distributions.Categorical(logits=logits)
+
+
+   class EntityCritic(Critic):
+       def __init__(self, obs_space, cfg=None):
+           super().__init__(obs_space, cfg)
+           # 在这里构建 value 网络。
+
+       def forward(self, obs):
+           ...
+
+       def get_value(self, obs):
+           return self.forward(obs)
+
+
+   mappo_agent = MAPPO(
+       env=multiagent_env,
+       cfg=MAPPOConfig(
+           centralized_critic=True,
+           share_actor=True,
+           share_critic=True,
+       ),
+       actor_class=EntityDiscreteActor,
+       critic_class=EntityCritic,
+       actor_cfg={"hidden_dim": 256},
+       critic_cfg={"hidden_dim": 512},
+   )
+
+   ippo_agent = IPPO(
+       env=multiagent_env,
+       cfg=IPPOConfig(share_actor=True, share_critic=True),
+       actor_class=EntityDiscreteActor,
+       critic_class=EntityCritic,
+   )
+
+当 MAPPO 使用 ``centralized_critic=True`` 时，critic 接收的是
+``env.state_space`` 和 ``env.get_state()`` 返回的全局 state。IPPO，或设置
+``centralized_critic=False`` 的 MAPPO，则让每个 critic 接收对应 agent 的局部
+观测空间和局部观测。actor 始终接收每个 agent 自己的局部观测。
+
+参数共享由 multi-agent 配置控制：
+
+- ``share_actor=True`` 会创建一个 actor 实例并复用于所有 agent。此时要求所有
+  agent 的 observation/action space 一致。
+- ``share_critic=True`` 会创建一个 critic 实例并复用于所有 agent。使用分散式
+  critic 时要求所有 observation space 一致；使用集中式 critic 时所有 critic
+  都输入同一个 state space。
+- 如果不同 agent 需要不同参数，把对应开关设为 ``False``。
+
+也可以通过 ``models`` 字典传入已经构建好的 ApexRL actor / critic 对象。这适合
+异构 agent，或者需要手动控制哪些模块共享：
+
+.. code-block:: python
+
+   models = {
+       "agent_0": {"policy": actor_0, "value": critic_0},
+       "agent_1": {"policy": actor_1, "value": critic_1},
+   }
+
+   agent = MAPPO(
+       possible_agents=["agent_0", "agent_1"],
+       observation_spaces=observation_spaces,
+       action_spaces=action_spaces,
+       state_space=state_space,
+       models=models,
+       cfg=MAPPOConfig(centralized_critic=True),
+   )
+
+对于更复杂的多智能体网络，建议把实体表示成固定结构的观测，例如
+``spaces.Dict`` 字段、padding 后的 tensor 和 mask。这样 attention、DeepSets、
+GNN、transformer encoder 可以直接写在 actor 或 critic 内部，不需要改
+MAPPO/IPPO。
+
 最佳实践
 --------
 
@@ -195,3 +291,5 @@ Critic 示例
 3. 离散 PPO 使用 ``DiscreteActor``，连续 PPO 使用 ``ContinuousActor``。
 4. 对 SAC，自定义 critic 时保持 ``ContinuousQNetwork`` 形式，即 ``forward(obs, actions)``。
 5. 对图像 + 向量输入，优先使用分支编码器而不是单个扁平 MLP。
+6. 对 MAPPO/IPPO，actor 使用每个 agent 的局部观测，critic 输入由算法配置选择
+   集中式 state 或分散式局部观测。
