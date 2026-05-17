@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   apexrl.multiagent.algorithms.happo
    apexrl.multiagent.algorithms.ippo
    apexrl.multiagent.algorithms.mappo
 

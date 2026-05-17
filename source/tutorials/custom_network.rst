@@ -191,15 +191,15 @@ Using Custom Networks
 Multi-Agent Custom Networks
 ---------------------------
 
-MAPPO and IPPO use the same custom network pattern as PPO: pass ApexRL actor and
-critic classes, plus optional configuration dictionaries. The network classes
-can contain arbitrary PyTorch modules internally while inheriting ApexRL's actor
-or critic base interfaces.
+MAPPO, IPPO and HAPPO use the same custom network pattern as PPO: pass ApexRL
+actor and critic classes, plus optional configuration dictionaries. The network
+classes can contain arbitrary PyTorch modules internally while inheriting
+ApexRL's actor or critic base interfaces.
 
 .. code-block:: python
 
    from apexrl.models.base import Critic, DiscreteActor
-   from apexrl.multiagent import IPPO, IPPOConfig, MAPPO, MAPPOConfig
+   from apexrl.multiagent import HAPPO, HAPPOConfig, IPPO, IPPOConfig, MAPPO, MAPPOConfig
 
 
    class EntityDiscreteActor(DiscreteActor):
@@ -247,6 +247,13 @@ or critic base interfaces.
        critic_class=EntityCritic,
    )
 
+   happo_agent = HAPPO(
+       env=multiagent_env,
+       cfg=HAPPOConfig(centralized_critic=True, share_actor=False),
+       actor_class=EntityDiscreteActor,
+       critic_class=EntityCritic,
+   )
+
 For MAPPO with ``centralized_critic=True``, the critic receives
 ``env.state_space`` and ``env.get_state()`` outputs. For IPPO, or MAPPO with
 ``centralized_critic=False``, each critic receives that agent's local
@@ -257,6 +264,8 @@ Parameter sharing is controlled by the multi-agent config:
 
 - ``share_actor=True`` creates one actor instance and reuses it for all agents.
   This requires identical observation and action spaces across agents.
+- HAPPO uses ``share_actor=False`` so each agent has a separate policy for its
+  sequential update.
 - ``share_critic=True`` creates one critic instance and reuses it for all
   agents. With decentralized critics, this requires identical observation
   spaces; with centralized critics, all critics consume the shared state space.
@@ -285,7 +294,7 @@ sharing selected modules:
 For more complex multi-agent networks, prefer representing entities with fixed
 structured observations, such as ``spaces.Dict`` entries, padded tensors and
 masks. Attention, DeepSets, GNN and transformer-style encoders can then be
-implemented inside the actor or critic without changing MAPPO/IPPO.
+implemented inside the actor or critic without changing MAPPO/IPPO/HAPPO.
 
 Best Practices
 --------------
@@ -295,5 +304,5 @@ Best Practices
 3. Use ``DiscreteActor`` for discrete PPO and ``ContinuousActor`` for continuous PPO.
 4. For SAC, keep custom critics in ``ContinuousQNetwork`` form, i.e. ``forward(obs, actions)``.
 5. Prefer explicit branch encoders for image + vector inputs instead of a single flat MLP.
-6. For MAPPO/IPPO, use local per-agent observations in actors and choose
+6. For MAPPO/IPPO/HAPPO, use local per-agent observations in actors and choose
    centralized or decentralized critic observations through the algorithm config.

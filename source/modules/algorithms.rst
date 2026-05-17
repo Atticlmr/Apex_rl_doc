@@ -33,6 +33,10 @@ Available Algorithms
      - Multi-agent on-policy
      - ✅ Available
      - Independent PPO with decentralized critics
+   * - HAPPO
+     - Multi-agent on-policy
+     - ✅ Available
+     - Heterogeneous-Agent PPO with sequential policy updates
 
 PPO (Proximal Policy Optimization)
 ----------------------------------
@@ -89,16 +93,18 @@ and treat ``PPO`` as the algorithm implementation plugged into that runner.
 Multi-Agent PPO Algorithms
 --------------------------
 
-MAPPO and IPPO share the same multi-agent runner and rollout storage. MAPPO uses
-centralized training with decentralized execution: each actor consumes local
-agent observations, while critics can consume a centralized environment state.
-IPPO keeps the same per-agent actor interface but uses local observations for
-each critic by setting ``centralized_critic=False``.
+MAPPO, IPPO and HAPPO share the same multi-agent runner and rollout storage.
+MAPPO uses centralized training with decentralized execution: each actor
+consumes local agent observations, while critics can consume a centralized
+environment state. IPPO keeps the same per-agent actor interface but uses local
+observations for each critic by setting ``centralized_critic=False``. HAPPO uses
+separate actors and sequential policy updates with correction factors from
+agents updated earlier in the current update order.
 
 .. code-block:: python
 
    from apexrl.models import MLPActor, MLPCritic
-   from apexrl.multiagent import IPPO, IPPOConfig, MAPPO, MAPPOConfig
+   from apexrl.multiagent import HAPPO, HAPPOConfig, IPPO, IPPOConfig, MAPPO, MAPPOConfig
 
    mappo_cfg = MAPPOConfig(centralized_critic=True, share_actor=True)
    mappo_agent = MAPPO(
@@ -115,6 +121,42 @@ each critic by setting ``centralized_critic=False``.
        actor_class=MLPActor,
        critic_class=MLPCritic,
    )
+
+   happo_cfg = HAPPOConfig(centralized_critic=True, share_actor=False)
+   happo_agent = HAPPO(
+       env=multiagent_env,
+       cfg=happo_cfg,
+       actor_class=MLPActor,
+       critic_class=MLPCritic,
+   )
+
+Paper References
+----------------
+
+.. list-table::
+   :header-rows: 1
+
+   * - Algorithm
+     - Reference
+     - Link
+   * - PPO
+     - Proximal Policy Optimization Algorithms
+     - https://arxiv.org/abs/1707.06347
+   * - DQN
+     - Playing Atari with Deep Reinforcement Learning
+     - https://arxiv.org/abs/1312.5602
+   * - SAC
+     - Soft Actor-Critic Algorithms and Applications
+     - https://arxiv.org/abs/1812.05905
+   * - MAPPO
+     - The Surprising Effectiveness of PPO in Cooperative, Multi-Agent Games
+     - https://arxiv.org/abs/2103.01955
+   * - IPPO
+     - Is Independent Learning All You Need in the StarCraft Multi-Agent Challenge?
+     - https://arxiv.org/abs/2011.09533
+   * - HAPPO
+     - Trust Region Policy Optimisation in Multi-Agent Reinforcement Learning
+     - https://arxiv.org/abs/2109.11251
 
 Configuration
 ~~~~~~~~~~~~~
