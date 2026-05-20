@@ -187,6 +187,33 @@ Critic 示例
        log_dir="./logs",
    )
 
+Recurrent PPO 网络
+------------------
+
+``RecurrentPPO`` 也使用同样的 ``actor_class`` / ``critic_class`` 注入方式，
+自定义 recurrent 网络需要遵循 RecurrentPPO 的 actor / critic 接口。ApexRL
+内置 ``GRUActor``、``GRUDiscreteActor`` 和 ``GRUCritic`` 作为参考实现。
+
+.. code-block:: python
+
+   from apexrl.agent import OnPolicyRunner
+   from apexrl.algorithms.ppo import RecurrentPPOConfig
+   from apexrl.models import GRUCritic, GRUDiscreteActor
+
+   runner = OnPolicyRunner(
+       env=env,
+       algorithm="recurrent_ppo",
+       cfg=RecurrentPPOConfig(
+           num_steps=64,
+           sequence_length=16,
+           recurrent_minibatch_size=256,
+       ),
+       actor_class=GRUDiscreteActor,
+       critic_class=GRUCritic,
+       actor_cfg={"hidden_dims": [128], "rnn_hidden_size": 128},
+       critic_cfg={"hidden_dims": [128], "rnn_hidden_size": 128},
+   )
+
 多智能体自定义网络
 ------------------
 

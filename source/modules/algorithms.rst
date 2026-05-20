@@ -17,6 +17,10 @@ Available Algorithms
      - On-policy
      - ✅ Available
      - Proximal Policy Optimization
+   * - RecurrentPPO
+     - On-policy
+     - ✅ Available
+     - PPO with sequence minibatches and recurrent actor/critic state
    * - DQN
      - Off-policy
      - ✅ Available
@@ -41,7 +45,7 @@ Available Algorithms
 PPO (Proximal Policy Optimization)
 ----------------------------------
 
-PPO is the primary algorithm currently available in ApexRL. It's an on-policy algorithm known for its stability and ease of use.
+PPO is an on-policy algorithm known for its stability and ease of use.
 
 Key Features
 ~~~~~~~~~~~~
@@ -89,6 +93,14 @@ Basic Usage
 
 For new projects, prefer ``OnPolicyRunner`` as the primary training entrypoint
 and treat ``PPO`` as the algorithm implementation plugged into that runner.
+
+Recurrent PPO
+~~~~~~~~~~~~~
+
+``RecurrentPPO`` keeps actor and critic hidden state during rollout collection
+and trains on contiguous sequence minibatches instead of shuffled single-step
+transitions. It accepts custom recurrent ``actor_class`` and ``critic_class``
+arguments, matching the normal PPO construction pattern.
 
 Multi-Agent PPO Algorithms
 --------------------------
@@ -166,10 +178,21 @@ Configuration
    :undoc-members:
    :noindex:
 
+.. autoclass:: apexrl.algorithms.ppo.config_rnn.RecurrentPPOConfig
+   :members:
+   :undoc-members:
+   :noindex:
+
 API Reference
 ~~~~~~~~~~~~~
 
 .. autoclass:: apexrl.algorithms.ppo.ppo.PPO
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
+.. autoclass:: apexrl.algorithms.ppo.ppo_rnn.RecurrentPPO
    :members:
    :undoc-members:
    :show-inheritance:

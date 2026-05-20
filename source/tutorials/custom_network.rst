@@ -188,6 +188,34 @@ Using Custom Networks
        log_dir="./logs",
    )
 
+Recurrent PPO Networks
+----------------------
+
+``RecurrentPPO`` uses the same ``actor_class`` / ``critic_class`` injection
+pattern. Custom recurrent networks should follow the RecurrentPPO actor and
+critic interfaces. ApexRL includes ``GRUActor``, ``GRUDiscreteActor`` and
+``GRUCritic`` as reference implementations.
+
+.. code-block:: python
+
+   from apexrl.agent import OnPolicyRunner
+   from apexrl.algorithms.ppo import RecurrentPPOConfig
+   from apexrl.models import GRUCritic, GRUDiscreteActor
+
+   runner = OnPolicyRunner(
+       env=env,
+       algorithm="recurrent_ppo",
+       cfg=RecurrentPPOConfig(
+           num_steps=64,
+           sequence_length=16,
+           recurrent_minibatch_size=256,
+       ),
+       actor_class=GRUDiscreteActor,
+       critic_class=GRUCritic,
+       actor_cfg={"hidden_dims": [128], "rnn_hidden_size": 128},
+       critic_cfg={"hidden_dims": [128], "rnn_hidden_size": 128},
+   )
+
 Multi-Agent Custom Networks
 ---------------------------
 

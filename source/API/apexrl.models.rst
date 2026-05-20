@@ -10,6 +10,7 @@ Submodules
    apexrl.models.base
    apexrl.models.dynamics
    apexrl.models.mlp
+   apexrl.models.recurrent
 
 Module contents
 ---------------
