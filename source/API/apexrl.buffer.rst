@@ -10,6 +10,7 @@ Submodules
    apexrl.buffer.distillation_buffer
    apexrl.buffer.replay_buffer
    apexrl.buffer.rollout_buffer
+   apexrl.buffer.rollout_rnn_buffer
 
 Module contents
 ---------------
@@ -18,3 +19,4 @@ Module contents
    :members:
    :show-inheritance:
    :undoc-members:
+   :noindex:

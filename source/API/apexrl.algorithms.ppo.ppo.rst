@@ -5,3 +5,4 @@ apexrl.algorithms.ppo.ppo module
    :members:
    :show-inheritance:
    :undoc-members:
+   :noindex:

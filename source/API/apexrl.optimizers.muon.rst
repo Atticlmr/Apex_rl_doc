@@ -5,3 +5,4 @@ apexrl.optimizers.muon module
    :members:
    :show-inheritance:
    :undoc-members:
+   :noindex:

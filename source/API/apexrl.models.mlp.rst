@@ -5,3 +5,4 @@ apexrl.models.mlp module
    :members:
    :show-inheritance:
    :undoc-members:
+   :noindex:

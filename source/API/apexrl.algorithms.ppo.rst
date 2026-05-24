@@ -8,7 +8,9 @@ Submodules
    :maxdepth: 4
 
    apexrl.algorithms.ppo.config
+   apexrl.algorithms.ppo.config_rnn
    apexrl.algorithms.ppo.ppo
+   apexrl.algorithms.ppo.ppo_rnn
 
 Module contents
 ---------------
@@ -17,3 +19,4 @@ Module contents
    :members:
    :show-inheritance:
    :undoc-members:
+   :noindex:
