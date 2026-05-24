@@ -29,6 +29,10 @@ Available Algorithms
      - Off-policy
      - ✅ Available
      - Soft Actor-Critic
+   * - TD3
+     - Off-policy
+     - ✅ Available
+     - Twin Delayed DDPG for continuous control
    * - MAPPO
      - Multi-agent on-policy
      - ✅ Available
@@ -160,6 +164,9 @@ Paper References
    * - SAC
      - Soft Actor-Critic Algorithms and Applications
      - https://arxiv.org/abs/1812.05905
+   * - TD3
+     - Addressing Function Approximation Error in Actor-Critic Methods
+     - https://arxiv.org/abs/1802.09477
    * - MAPPO
      - The Surprising Effectiveness of PPO in Cooperative, Multi-Agent Games
      - https://arxiv.org/abs/2103.01955
@@ -592,3 +599,90 @@ Included SAC smoke tasks:
 
 - ``Pendulum-v1 (SAC)``
 - ``MountainCarContinuous-v0 (SAC)``
+
+TD3 (Twin Delayed DDPG)
+----------------------
+
+TD3 is available for continuous-control environments through
+``ReplayBuffer``, ``OffPolicyRunner``, a deterministic actor, and twin
+``Q(s, a)`` critics. It improves DDPG with clipped double-Q targets, delayed
+policy updates, and target policy smoothing.
+
+Key Features
+~~~~~~~~~~~~
+
+- Deterministic bounded actor
+- Twin critics with conservative ``min(Q1, Q2)`` targets
+- Delayed actor and target-network updates
+- Clipped target policy smoothing noise
+- Shared ``OffPolicyRunner`` training entrypoint
+
+Basic Usage
+~~~~~~~~~~~
+
+.. code-block:: python
+
+   import torch
+   from gymnasium import make
+
+   from apexrl.agent.off_policy_runner import OffPolicyRunner
+   from apexrl.algorithms.td3 import TD3Config
+   from apexrl.envs.gym_wrapper import GymVecEnvContinuous
+
+   env = GymVecEnvContinuous(
+       [lambda: make("Pendulum-v1") for _ in range(2)],
+       device="cpu",
+   )
+
+   cfg = TD3Config(
+       batch_size=256,
+       buffer_size=100_000,
+       learning_starts=5_000,
+       policy_delay=2,
+   )
+
+   runner = OffPolicyRunner(
+       env=env,
+       cfg=cfg,
+       algorithm="td3",
+       device=torch.device("cpu"),
+   )
+   runner.learn(total_timesteps=200_000)
+
+Configuration
+~~~~~~~~~~~~~
+
+.. autoclass:: apexrl.algorithms.td3.config.TD3Config
+   :members:
+   :undoc-members:
+   :noindex:
+
+API Reference
+~~~~~~~~~~~~~
+
+.. autoclass:: apexrl.algorithms.td3.td3.TD3
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
+Algorithm Details
+~~~~~~~~~~~~~~~~~
+
+TD3 critic target:
+
+.. math::
+
+   y = r + \gamma (1-d)\min(Q_1'(s', a'), Q_2'(s', a'))
+
+Target action with policy smoothing:
+
+.. math::
+
+   a' = \mathrm{clip}(\mu'(s') + \epsilon, a_{low}, a_{high})
+
+Actor loss:
+
+.. math::
+
+   L_{\mu} = -\mathbb{E}[Q_1(s, \mu(s))]

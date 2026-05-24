@@ -6,6 +6,35 @@ All notable changes to ApexRL will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+[0.3.0] - 2026-05-24
+--------------------
+
+Added
+~~~~~
+
+single-agent:
+
+- add support for Recurrent-PPO
+
+multi-agent:
+
+- Full multi-agent reinforcement learning support with ``MAPPO``, ``IPPO``,
+  and ``HAPPO`` algorithms, including dedicated configs and training loops.
+- ``MultiAgentRunner`` for unified multi-agent training orchestration with
+  logging, checkpointing, and callback support on par with single-agent
+  runners.
+- ``MultiAgentVecEnv`` base class and cooperative environment wrappers for
+  batched multi-agent episode collection.
+- ``MultiAgentRolloutBuffer`` for structured storage of multi-agent
+  observations, actions, rewards, and terminal flags.
+
+
+TODO 
+~~~~
+
+- Recurrent-Network support for multi-agent RL.
+- JAX support.
+
 [0.2.2] - 2026-05-13
 --------------------
 

@@ -10,6 +10,8 @@ Subpackages
    apexrl.algorithms.dqn
    apexrl.algorithms.ppo
    apexrl.algorithms.sac
+   apexrl.algorithms.td3
+   apexrl.algorithms.td3
 
 Module contents
 ---------------

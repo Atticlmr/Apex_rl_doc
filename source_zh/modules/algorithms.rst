@@ -29,6 +29,10 @@ ApexRL 提供最先进的强化学习算法实现。
      - 异策略
      - ✅ 可用
      - 软 Actor-Critic
+   * - TD3
+     - 异策略
+     - ✅ 可用
+     - 用于连续控制的 Twin Delayed DDPG
    * - MAPPO
      - 多智能体同策略
      - ✅ 可用
@@ -158,6 +162,9 @@ state。IPPO 保持相同的 per-agent actor 接口，但通过
    * - SAC
      - Soft Actor-Critic Algorithms and Applications
      - https://arxiv.org/abs/1812.05905
+   * - TD3
+     - Addressing Function Approximation Error in Actor-Critic Methods
+     - https://arxiv.org/abs/1802.09477
    * - MAPPO
      - The Surprising Effectiveness of PPO in Cooperative, Multi-Agent Games
      - https://arxiv.org/abs/2103.01955
@@ -586,3 +593,89 @@ benchmark 脚本已包含 SAC 的轻量任务：
 
 - ``Pendulum-v1 (SAC)``
 - ``MountainCarContinuous-v0 (SAC)``
+
+TD3（Twin Delayed DDPG）
+-----------------------
+
+TD3 可用于连续控制环境，核心组件包括 ``ReplayBuffer``、``OffPolicyRunner``、
+确定性 actor 和两个 ``Q(s, a)`` critic。它在 DDPG 基础上加入 clipped
+double-Q target、延迟策略更新和 target policy smoothing。
+
+关键特性
+~~~~~~~~
+
+- 输出有界连续动作的确定性 actor
+- 使用 ``min(Q1, Q2)`` 的 twin critics target
+- 延迟 actor 和 target network 更新
+- clipped target policy smoothing noise
+- 复用统一的 ``OffPolicyRunner`` 训练入口
+
+基本用法
+~~~~~~~~
+
+.. code-block:: python
+
+   import torch
+   from gymnasium import make
+
+   from apexrl.agent.off_policy_runner import OffPolicyRunner
+   from apexrl.algorithms.td3 import TD3Config
+   from apexrl.envs.gym_wrapper import GymVecEnvContinuous
+
+   env = GymVecEnvContinuous(
+       [lambda: make("Pendulum-v1") for _ in range(2)],
+       device="cpu",
+   )
+
+   cfg = TD3Config(
+       batch_size=256,
+       buffer_size=100_000,
+       learning_starts=5_000,
+       policy_delay=2,
+   )
+
+   runner = OffPolicyRunner(
+       env=env,
+       cfg=cfg,
+       algorithm="td3",
+       device=torch.device("cpu"),
+   )
+   runner.learn(total_timesteps=200_000)
+
+配置
+~~~~
+
+.. autoclass:: apexrl.algorithms.td3.config.TD3Config
+   :members:
+   :undoc-members:
+   :noindex:
+
+API 参考
+~~~~~~~~
+
+.. autoclass:: apexrl.algorithms.td3.td3.TD3
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
+
+算法细节
+~~~~~~~~
+
+TD3 critic target：
+
+.. math::
+
+   y = r + \gamma (1-d)\min(Q_1'(s', a'), Q_2'(s', a'))
+
+带 policy smoothing 的 target action：
+
+.. math::
+
+   a' = \mathrm{clip}(\mu'(s') + \epsilon, a_{low}, a_{high})
+
+actor 损失：
+
+.. math::
+
+   L_{\mu} = -\mathbb{E}[Q_1(s, \mu(s))]
