@@ -8,9 +8,9 @@ Subpackages
    :maxdepth: 4
 
    apexrl.algorithms.dqn
+   apexrl.algorithms.flash_sac
    apexrl.algorithms.ppo
    apexrl.algorithms.sac
-   apexrl.algorithms.td3
    apexrl.algorithms.td3
 
 Module contents

@@ -164,6 +164,9 @@ Paper References
    * - SAC
      - Soft Actor-Critic Algorithms and Applications
      - https://arxiv.org/abs/1812.05905
+   * - FlashSAC
+     - FlashSAC: Fast and Stable Off-Policy Reinforcement Learning for High-Dimensional Robot Control
+     - https://arxiv.org/abs/2604.04539
    * - TD3
      - Addressing Function Approximation Error in Actor-Critic Methods
      - https://arxiv.org/abs/1802.09477
@@ -599,6 +602,52 @@ Included SAC smoke tasks:
 
 - ``Pendulum-v1 (SAC)``
 - ``MountainCarContinuous-v0 (SAC)``
+
+FlashSAC
+--------
+
+FlashSAC is a SAC-style algorithm for high-throughput continuous control. It
+uses the same off-policy runner interface as SAC, but defaults to larger
+batches and networks and adds optional critic feature and weight norm controls.
+
+.. code-block:: python
+
+   import torch
+
+   from apexrl.agent.off_policy_runner import OffPolicyRunner
+   from apexrl.algorithms.flash_sac import FlashSACConfig
+
+   cfg = FlashSACConfig(
+       batch_size=2048,
+       buffer_size=2_000_000,
+       learning_starts=32_768,
+       gradient_steps=1,
+       critic_feature_norm_coef=1e-4,
+   )
+
+   runner = OffPolicyRunner(
+       env=env,
+       cfg=cfg,
+       algorithm="flash_sac",
+       device=torch.device("cuda"),
+   )
+
+Configuration
+~~~~~~~~~~~~~
+
+.. autoclass:: apexrl.algorithms.flash_sac.config.FlashSACConfig
+   :members:
+   :undoc-members:
+   :noindex:
+
+API Reference
+~~~~~~~~~~~~~
+
+.. autoclass:: apexrl.algorithms.flash_sac.flash_sac.FlashSAC
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :noindex:
 
 TD3 (Twin Delayed DDPG)
 ----------------------
