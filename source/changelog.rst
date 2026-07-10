@@ -6,6 +6,25 @@ All notable changes to ApexRL will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+[0.3.1] - 2026-07-10
+--------------------
+
+Fixed
+~~~~~
+
+- PPO and multi-agent runners now round timestep targets up to complete
+  rollouts instead of silently undershooting the requested target.
+- Checkpoint resume now continues global iteration counters, learning-rate
+  schedules, logs, and checkpoint filenames instead of restarting at zero.
+
+Changed
+~~~~~~~
+
+- Updated the documented algorithm matrix for Recurrent PPO, TD3, FlashSAC,
+  MAPPO, IPPO, and HAPPO.
+- Added Python 3.10 through 3.13 test CI and a dedicated Ruff lint job.
+- Added independent FlashSAC update, runner, and checkpoint coverage.
+
 [0.3.0] - 2026-05-24
 --------------------
 
@@ -15,6 +34,12 @@ Added
 single-agent:
 
 - add support for Recurrent-PPO
+- Added TD3 with delayed actor updates, target policy smoothing, and bounded
+  deterministic actions.
+- Added FlashSAC with large-batch defaults, reward scaling, target clipping,
+  and optional critic/actor norm controls.
+- Added structured and multimodal observations throughout environment wrappers,
+  buffers, default models, and single-agent algorithms.
 
 multi-agent:
 
