@@ -6,8 +6,19 @@ All notable changes to ApexRL will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
-[0.3.1] - 2026-07-10
+[0.3.1] - 2026-07-16
 --------------------
+
+Added
+~~~~~
+
+- Reworked FlashSAC around the reference algorithm's residual BatchNorm/RMSNorm
+  actor and critic architecture with unit-row weight projection.
+- Added twin categorical critics and entropy-regularized Bellman projection.
+- Added discounted-return reward normalization, target-sigma entropy tuning,
+  delayed actor updates, and truncated-zeta exploration noise repetition.
+- Added FlashSAC checkpoint coverage for reward-normalizer and exploration
+  state, plus multimodal and privileged-observation training tests.
 
 Fixed
 ~~~~~
